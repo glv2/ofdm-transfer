@@ -1,0 +1,116 @@
+ofdm-transfer
+=============
+
+ofdm-transfer is a command-line program to send or receive data by software
+defined radio using the OFDM modulation (64 subcarriers, QPSK).
+
+
+## Usage
+
+ofdm-transfer [options] [filename]
+
+Options:
+  -b <bit rate>  (default: 9600 b/s)
+    Bit rate of the OFDM transmission.
+  -c <ppm>  (default: 0.0, can be negative)
+    Correction for the radio clock.
+  -d <filename>
+    Dump a copy of the samples sent to or received from
+    the radio.
+  -e <fec[,fec]>  (default: h128,none)
+    Inner and outer forward error correction codes to use.
+  -f <frequency>  (default: 434000000 Hz)
+    Frequency of the OFDM transmission.
+  -g <gain>  (default: 0)
+    Gain of the radio transceiver.
+  -h
+    This help.
+  -i <id>  (default: "")
+    Transfer id (at most 4 bytes). When receiving, the frames
+    with a different id will be ignored.
+  -o <offset>  (default: 0 Hz, can be negative)
+    Set the central frequency of the transceiver 'offset' Hz
+    lower than the signal frequency to send or receive.
+  -r <radio type>  (default: "")
+    Radio to use.
+  -s <sample rate>  (default: 2000000 S/s)
+    Sample rate to use.
+  -t
+    Use transmit mode.
+  -v
+    Print debug messages.
+
+By default the program is in 'receive' mode.
+Use the '-t' option to use the 'transmit' mode.
+
+In 'receive' mode, the samples are received from the radio,
+and the decoded data is written either to 'filename' if it
+is specified, or to standard output.
+In 'transmit' mode, the data to send is read either from
+'filename' if it is specified, or from standard input,
+and the samples are sent to the radio.
+
+Instead of a real radio transceiver, the 'io' radio type uses
+standard input in 'receive' mode, and standard output in
+'transmit' mode. The samples must be in 'complex float' format
+(32 bits for the real part, 32 bits for the imaginary part).
+
+
+## Compilation
+
+ofdm-transfer requires the following dependencies:
+  - libliquid (https://github.com/jgaeddert/liquid-dsp)
+  - libSoapySDR (https://github.com/pothosware/SoapySDR)
+
+It can be compiled with the usual:
+
+    ./autogen.sh
+    ./configure
+    make
+
+
+## Supported radios
+
+ofdm-transfer uses the SoapySDR API, therefore if your radio is supported by
+SoapySDR and you have the right driver installed, it should work.
+
+When used with the '-h' option to print the help message, ofdm-transfer will
+also list the radios that it has detected.
+
+
+## Supported FEC codes
+
+The forward error correction codes that can be specified with the '-e' option
+are the codes that are supported by libliquid.
+
+These should always be available:
+  - none
+  - rep3: repeat(3)
+  - rep5: repeat(5)
+  - h74: Hamming(7,4)
+  - h84: Hamming(8,4)
+  - h128: Hamming(12,8)
+  - g2412: Golay(24,12)
+  - secded2216: SEC-DEC(22,16)
+  - secded3932: SEC-DEC(39,32)
+  - secded7264: SEC-DEC(72,64)
+
+If your libliquid library has been compiled with support for the libfec
+library, the following codes should also be available:
+  - v27: convolutional r1/2 K=7
+  - v29: convolutional r1/2 K=9
+  - v39: convolutional r1/3 K=9
+  - v615: convolutional r1/6 K=15
+  - v27p23: convolutional r2/3 K=7 (punctured)
+  - v27p34: convolutional r3/4 K=7 (punctured)
+  - v27p45: convolutional r4/5 K=7 (punctured)
+  - v27p56: convolutional r5/6 K=7 (punctured)
+  - v27p67: convolutional r6/7 K=7 (punctured)
+  - v27p78: convolutional r7/8 K=7 (punctured)
+  - v29p23: convolutional r2/3 K=9 (punctured)
+  - v29p34: convolutional r3/4 K=9 (punctured)
+  - v29p45: convolutional r4/5 K=9 (punctured)
+  - v29p56: convolutional r5/6 K=9 (punctured)
+  - v29p67: convolutional r6/7 K=9 (punctured)
+  - v29p78: convolutional r7/8 K=9 (punctured)
+  - rs8: Reed-Solomon, 223/255

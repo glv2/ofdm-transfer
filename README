@@ -2,7 +2,7 @@ ofdm-transfer
 =============
 
 ofdm-transfer is a command-line program to send or receive data by software
-defined radio using the OFDM modulation (64 subcarriers, QPSK).
+defined radio using the OFDM modulation (64 subcarriers).
 
 
 ## Usage
@@ -28,6 +28,8 @@ Options:
   -i <id>  (default: "")
     Transfer id (at most 4 bytes). When receiving, the frames
     with a different id will be ignored.
+  -m <modulation>  (default: qpsk)
+    Modulation to use for the subcarriers.
   -o <offset>  (default: 0 Hz, can be negative)
     Set the central frequency of the transceiver 'offset' Hz
     lower than the signal frequency to send or receive.
@@ -76,6 +78,17 @@ SoapySDR and you have the right driver installed, it should work.
 
 When used with the '-h' option to print the help message, ofdm-transfer will
 also list the radios that it has detected.
+
+
+## Supported subcarrier modulations
+  - bpsk
+  - qpsk
+  - psk8
+  - apsk16
+  - apsk32
+  - apsk64
+  - apsk128
+  - apsk256
 
 
 ## Supported FEC codes

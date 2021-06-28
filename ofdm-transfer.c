@@ -219,6 +219,51 @@ unsigned int receive_from_radio(radio_t *radio, complex float *samples,
   return(n);
 }
 
+unsigned int bits_per_symbol(modulation_scheme modulation)
+{
+  unsigned int n;
+
+  switch(modulation)
+  {
+  case LIQUID_MODEM_BPSK:
+    n = 1;
+    break;
+
+  case LIQUID_MODEM_QPSK:
+    n = 2;
+    break;
+
+  case LIQUID_MODEM_PSK8:
+    n = 3;
+    break;
+
+  case LIQUID_MODEM_APSK16:
+    n = 4;
+    break;
+
+  case LIQUID_MODEM_APSK32:
+    n = 5;
+    break;
+
+  case LIQUID_MODEM_APSK64:
+    n = 6;
+    break;
+
+  case LIQUID_MODEM_APSK128:
+    n = 7;
+    break;
+
+  case LIQUID_MODEM_APSK256:
+    n = 8;
+    break;
+
+  default:
+    n = 1;
+    break;
+  }
+  return(n);
+}
+
 void set_counter(unsigned char *header, unsigned int counter)
 {
   header[4] = (counter >> 24) & 255;
@@ -251,13 +296,13 @@ void send_dummy_samples(radio_t *radio, msresamp_crcf resampler, nco_crcf oscill
 }
 
 void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
-                 crc_scheme crc, fec_scheme inner_fec, fec_scheme outer_fec)
+                 crc_scheme crc, fec_scheme inner_fec, fec_scheme outer_fec,
+                 modulation_scheme subcarrier_modulation)
 {
   unsigned int subcarriers = 64;
   unsigned int cyclic_prefix_size = 16;
   unsigned int taper_size = 4;
-  modulation_scheme subcarrier_modulation = LIQUID_MODEM_QPSK;
-  unsigned int subcarrier_symbol_bits = 2;
+  unsigned int subcarrier_symbol_bits = bits_per_symbol(subcarrier_modulation);
   float samples_per_bit = 2.0 / subcarrier_symbol_bits;
   ofdmflexframegenprops_s frame_properties;
   ofdmflexframegen frame_generator;
@@ -405,12 +450,13 @@ int frame_received(unsigned char *header, int header_valid,
   return(0);
 }
 
-void receive_frames(radio_t *radio, float sample_rate, unsigned int bit_rate)
+void receive_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
+                    modulation_scheme subcarrier_modulation)
 {
   unsigned int subcarriers = 64;
   unsigned int cyclic_prefix_size = 16;
   unsigned int taper_size = 4;
-  unsigned int subcarrier_symbol_bits = 2; /* QPSK */
+  unsigned int subcarrier_symbol_bits = bits_per_symbol(subcarrier_modulation);
   float samples_per_bit = 2.0 / subcarrier_symbol_bits;
   ofdmflexframesync frame_synchronizer;
   float resampling_ratio = (bit_rate * samples_per_bit) / sample_rate;
@@ -519,6 +565,8 @@ void usage()
   printf("  -i <id>  (default: \"\")\n");
   printf("    Transfer id (at most 4 bytes). When receiving, the frames\n");
   printf("    with a different id will be ignored.\n");
+  printf("  -m <modulation>  (default: qpsk)\n");
+  printf("    Modulation to use for the subcarriers.\n");
   printf("  -o <offset>  (default: 0 Hz, can be negative)\n");
   printf("    Set the central frequency of the transceiver 'offset' Hz\n");
   printf("    lower than the signal frequency to send or receive.\n");
@@ -577,6 +625,16 @@ void usage()
   }
   SoapySDRKwargsList_clear(devices, size);
   printf("\n");
+  printf("Available subcarrier modulations:\n");
+  printf("  - bpsk\n");
+  printf("  - qpsk\n");
+  printf("  - psk8\n");
+  printf("  - apsk16\n");
+  printf("  - apsk32\n");
+  printf("  - apsk64\n");
+  printf("  - apsk128\n");
+  printf("  - apsk256\n");
+  printf("\n");
   printf("Available forward error correction codes:\n");
   liquid_print_fec_schemes();
 }
@@ -615,6 +673,26 @@ int get_fec_schemes(char *str, fec_scheme *inner_fec, fec_scheme *outer_fec)
   return(0);
 }
 
+int get_modulation_scheme(char *str, modulation_scheme *subcarrier_modulation)
+{
+  *subcarrier_modulation = liquid_getopt_str2mod(str);
+  switch(*subcarrier_modulation)
+  {
+  case LIQUID_MODEM_BPSK:
+  case LIQUID_MODEM_QPSK:
+  case LIQUID_MODEM_PSK8:
+  case LIQUID_MODEM_APSK16:
+  case LIQUID_MODEM_APSK32:
+  case LIQUID_MODEM_APSK64:
+  case LIQUID_MODEM_APSK128:
+  case LIQUID_MODEM_APSK256:
+    return(0);
+
+  default:
+    return(-1);
+  }
+}
+
 int main(int argc, char **argv)
 {
   int opt;
@@ -629,13 +707,14 @@ int main(int argc, char **argv)
   crc_scheme crc = LIQUID_CRC_32;
   fec_scheme inner_fec = LIQUID_FEC_HAMMING128;
   fec_scheme outer_fec = LIQUID_FEC_NONE;
+  modulation_scheme subcarrier_modulation = LIQUID_MODEM_QPSK;
   char *soapysdr_driver = "";
 
   bzero(&radio, sizeof(radio));
   radio.type = SOAPYSDR;
   radio.frequency = 434000000;
 
-  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:o:r:s:tv")) != -1)
+  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:o:r:s:tv")) != -1)
   {
     switch(opt)
     {
@@ -694,6 +773,14 @@ int main(int argc, char **argv)
       else
       {
         fprintf(stderr, "Error: Id must be at most 4 bytes long\n");
+        return(-1);
+      }
+      break;
+
+    case 'm':
+      if(get_modulation_scheme(optarg, &subcarrier_modulation) != 0)
+      {
+        fprintf(stderr, "Error: Unknown modulation schemes: '%s'\n", optarg);
         return(-1);
       }
       break;
@@ -786,11 +873,12 @@ int main(int argc, char **argv)
     }
     if(emit)
     {
-      send_frames(&radio, sample_rate, bit_rate, crc, inner_fec, outer_fec);
+      send_frames(&radio, sample_rate, bit_rate, crc,
+                  inner_fec, outer_fec, subcarrier_modulation);
     }
     else
     {
-      receive_frames(&radio, sample_rate, bit_rate);
+      receive_frames(&radio, sample_rate, bit_rate, subcarrier_modulation);
     }
     break;
 
@@ -829,7 +917,8 @@ int main(int argc, char **argv)
         return(-1);
       }
       SoapySDRDevice_activateStream(radio.device.soapysdr, radio.stream, 0, 0, 0);
-      send_frames(&radio, sample_rate, bit_rate, crc, inner_fec, outer_fec);
+      send_frames(&radio, sample_rate, bit_rate, crc,
+                  inner_fec, outer_fec, subcarrier_modulation);
     }
     else
     {
@@ -859,7 +948,7 @@ int main(int argc, char **argv)
         return(-1);
       }
       SoapySDRDevice_activateStream(radio.device.soapysdr, radio.stream, 0, 0, 0);
-      receive_frames(&radio, sample_rate, bit_rate);
+      receive_frames(&radio, sample_rate, bit_rate, subcarrier_modulation);
     }
     SoapySDRDevice_deactivateStream(radio.device.soapysdr, radio.stream, 0, 0);
     SoapySDRDevice_closeStream(radio.device.soapysdr, radio.stream);

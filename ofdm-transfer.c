@@ -256,12 +256,14 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   unsigned int subcarriers = 64;
   unsigned int cyclic_prefix_size = 16;
   unsigned int taper_size = 4;
-  unsigned int bits_per_subcarrier_symbol = 2;
-  unsigned int bits_per_symbol = subcarriers * bits_per_subcarrier_symbol;
+  modulation_scheme subcarrier_modulation = LIQUID_MODEM_QPSK;
+  unsigned int subcarrier_symbol_states = 2;
+  unsigned int bits_per_symbol = (subcarriers * subcarrier_symbol_states) / 2;
   unsigned int samples_per_symbol = subcarriers + cyclic_prefix_size;
+  float samples_per_bit = samples_per_symbol / bits_per_symbol;
   ofdmflexframegenprops_s frame_properties;
   ofdmflexframegen frame_generator;
-  float resampling_ratio = sample_rate / ((bit_rate / (bits_per_symbol / 2)) * samples_per_symbol);
+  float resampling_ratio = sample_rate / (bit_rate * samples_per_bit);
   msresamp_crcf resampler = msresamp_crcf_create(resampling_ratio, 60);
   unsigned int delay = (unsigned int) ceilf(msresamp_crcf_get_delay(resampler));
   unsigned int header_size = 8;
@@ -270,7 +272,7 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   unsigned char payload[payload_size];
   int r;
   unsigned int n;
-  unsigned int frame_samples_size = ((bit_rate / (bits_per_symbol / 2)) * samples_per_symbol) / 20; /* 50 ms */
+  unsigned int frame_samples_size = (bit_rate * samples_per_bit) / 20; /* 50 ms */
   unsigned int samples_size = ceilf((frame_samples_size + delay) * resampling_ratio);
   int frame_complete;
   float frequency_offset = (float) radio->frequency - radio->center_frequency;
@@ -293,7 +295,7 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   frame_properties.check = crc;
   frame_properties.fec0 = inner_fec;
   frame_properties.fec1 = outer_fec;
-  frame_properties.mod_scheme = LIQUID_MODEM_QPSK;
+  frame_properties.mod_scheme = subcarrier_modulation;
   frame_generator = ofdmflexframegen_create(subcarriers,
                                             cyclic_prefix_size,
                                             taper_size,
@@ -411,15 +413,16 @@ void receive_frames(radio_t *radio, float sample_rate, unsigned int bit_rate)
   unsigned int subcarriers = 64;
   unsigned int cyclic_prefix_size = 16;
   unsigned int taper_size = 4;
-  unsigned int bits_per_subcarrier_symbol = 2;
-  unsigned int bits_per_symbol = subcarriers * bits_per_subcarrier_symbol;
+  unsigned int subcarrier_symbol_states = 2; /* QPSK */
+  unsigned int bits_per_symbol = (subcarriers * subcarrier_symbol_states) / 2;
   unsigned int samples_per_symbol = subcarriers + cyclic_prefix_size;
+  float samples_per_bit = samples_per_symbol / bits_per_symbol;
   ofdmflexframesync frame_synchronizer;
-  float resampling_ratio = ((bit_rate * 2 / bits_per_symbol) * samples_per_symbol) / sample_rate;
+  float resampling_ratio = (bit_rate * samples_per_bit) / sample_rate;
   msresamp_crcf resampler = msresamp_crcf_create(resampling_ratio, 60);
   unsigned int delay = (unsigned int) ceilf(msresamp_crcf_get_delay(resampler));
   unsigned int n;
-  unsigned int frame_samples_size = ((bit_rate * 2 / bits_per_symbol) * samples_per_symbol) / 20; /* 50 ms */
+  unsigned int frame_samples_size = (bit_rate * samples_per_bit) / 20; /* 50 ms */
   unsigned int samples_size = (unsigned int) floorf(frame_samples_size / resampling_ratio) + delay;
   float frequency_offset = (float) radio->frequency - radio->center_frequency;
   nco_crcf oscillator = nco_crcf_create(LIQUID_NCO);

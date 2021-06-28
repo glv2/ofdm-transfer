@@ -330,10 +330,9 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
             break;
           }
         }
-        /* Reduce the amplitude of samples a little because the resampler
-         * may produce samples with an amplitude slightly greater than 1.0
-         * otherwise */
-        liquid_vectorcf_mulscalar(frame_samples, n, 0.9, frame_samples);
+        /* Reduce the amplitude of samples because the frame generator
+         * may produce samples with an amplitude greater than 1.0 */
+        liquid_vectorcf_mulscalar(frame_samples, n, 0.22, frame_samples);
         msresamp_crcf_execute(resampler, frame_samples, n, samples, &n);
         if(frequency_offset != 0)
         {

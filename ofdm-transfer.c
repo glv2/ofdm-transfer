@@ -257,10 +257,8 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   unsigned int cyclic_prefix_size = 16;
   unsigned int taper_size = 4;
   modulation_scheme subcarrier_modulation = LIQUID_MODEM_QPSK;
-  unsigned int subcarrier_symbol_states = 2;
-  unsigned int bits_per_symbol = (subcarriers * subcarrier_symbol_states) / 2;
-  unsigned int samples_per_symbol = subcarriers + cyclic_prefix_size;
-  float samples_per_bit = samples_per_symbol / bits_per_symbol;
+  unsigned int subcarrier_symbol_bits = 2;
+  float samples_per_bit = 2.0 / subcarrier_symbol_bits;
   ofdmflexframegenprops_s frame_properties;
   ofdmflexframegen frame_generator;
   float resampling_ratio = sample_rate / (bit_rate * samples_per_bit);
@@ -412,10 +410,8 @@ void receive_frames(radio_t *radio, float sample_rate, unsigned int bit_rate)
   unsigned int subcarriers = 64;
   unsigned int cyclic_prefix_size = 16;
   unsigned int taper_size = 4;
-  unsigned int subcarrier_symbol_states = 2; /* QPSK */
-  unsigned int bits_per_symbol = (subcarriers * subcarrier_symbol_states) / 2;
-  unsigned int samples_per_symbol = subcarriers + cyclic_prefix_size;
-  float samples_per_bit = samples_per_symbol / bits_per_symbol;
+  unsigned int subcarrier_symbol_bits = 2; /* QPSK */
+  float samples_per_bit = 2.0 / subcarrier_symbol_bits;
   ofdmflexframesync frame_synchronizer;
   float resampling_ratio = (bit_rate * samples_per_bit) / sample_rate;
   msresamp_crcf resampler = msresamp_crcf_create(resampling_ratio, 60);

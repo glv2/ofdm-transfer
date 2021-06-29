@@ -17,7 +17,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1w79i1gvr5f0wjwcwkh7kj4pw1758rxd1lzkchfk0q057cciv15m"))))
+        (base32 "015r4vy859cn4n5w5anm0fmyd4plf9gs7x2lvm1ari4fv7fi63q5"))))
     (build-system gnu-build-system)
     (native-inputs
      `(("autoconf" ,autoconf)

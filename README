@@ -10,7 +10,7 @@ defined radio using the OFDM modulation.
 ofdm-transfer [options] [filename]
 
 Options:
-  -b <bit rate>  (default: 9600 b/s)
+  -b <bit rate>  (default: 38400 b/s)
     Bit rate of the OFDM transmission.
   -c <ppm>  (default: 0.0, can be negative)
     Correction for the radio clock.

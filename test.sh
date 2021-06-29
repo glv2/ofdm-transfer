@@ -52,7 +52,7 @@ function check_nok()
 
 check_ok "Default parameters" "" ""
 check_ok "Bit rate 1200" "-b 1200" "-b 1200"
-check_ok "Bit rate 38400" "-b 38400" "-b 38400"
+check_ok "Bit rate 9600" "-b 9600" "-b 9600"
 check_ok "Bit rate 400000" "-b 400000" "-b 400000"
 check_nok "Wrong bit rate 9600 19200" "-b 9600" "-b 19200"
 check_ok "Frequency offset 200000" "-o 200000" "-o 200000"

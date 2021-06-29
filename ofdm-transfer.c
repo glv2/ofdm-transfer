@@ -553,7 +553,7 @@ void usage()
   printf("Usage: ofdm-transfer [options] [filename]\n");
   printf("\n");
   printf("Options:\n");
-  printf("  -b <bit rate>  (default: 9600 b/s)\n");
+  printf("  -b <bit rate>  (default: 38400 b/s)\n");
   printf("    Bit rate of the OFDM transmission.\n");
   printf("  -c <ppm>  (default: 0.0, can be negative)\n");
   printf("    Correction for the radio clock.\n");
@@ -752,7 +752,7 @@ int main(int argc, char **argv)
   int opt;
   int flags;
   float sample_rate = 2000000;
-  unsigned int bit_rate = 9600;
+  unsigned int bit_rate = 38400;
   radio_t radio;
   unsigned int emit = 0;
   unsigned int gain = 0;

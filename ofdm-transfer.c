@@ -297,11 +297,9 @@ void send_dummy_samples(radio_t *radio, msresamp_crcf resampler, nco_crcf oscill
 
 void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
                  crc_scheme crc, fec_scheme inner_fec, fec_scheme outer_fec,
-                 modulation_scheme subcarrier_modulation)
+                 modulation_scheme subcarrier_modulation, unsigned int subcarriers,
+                 unsigned int cyclic_prefix, unsigned int taper)
 {
-  unsigned int subcarriers = 64;
-  unsigned int cyclic_prefix_size = 16;
-  unsigned int taper_size = 4;
   unsigned int subcarrier_symbol_bits = bits_per_symbol(subcarrier_modulation);
   float samples_per_bit = 2.0 / subcarrier_symbol_bits;
   ofdmflexframegenprops_s frame_properties;
@@ -340,8 +338,8 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   frame_properties.fec1 = outer_fec;
   frame_properties.mod_scheme = subcarrier_modulation;
   frame_generator = ofdmflexframegen_create(subcarriers,
-                                            cyclic_prefix_size,
-                                            taper_size,
+                                            cyclic_prefix,
+                                            taper,
                                             NULL,
                                             &frame_properties);
   ofdmflexframegen_set_header_len(frame_generator, header_size);
@@ -451,11 +449,9 @@ int frame_received(unsigned char *header, int header_valid,
 }
 
 void receive_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
-                    modulation_scheme subcarrier_modulation)
+                    modulation_scheme subcarrier_modulation, unsigned int subcarriers,
+                    unsigned int cyclic_prefix, unsigned int taper)
 {
-  unsigned int subcarriers = 64;
-  unsigned int cyclic_prefix_size = 16;
-  unsigned int taper_size = 4;
   unsigned int subcarrier_symbol_bits = bits_per_symbol(subcarrier_modulation);
   float samples_per_bit = 2.0 / subcarrier_symbol_bits;
   ofdmflexframesync frame_synchronizer;
@@ -480,8 +476,8 @@ void receive_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   nco_crcf_set_frequency(oscillator, TAU * (frequency_offset / sample_rate));
 
   frame_synchronizer = ofdmflexframesync_create(subcarriers,
-                                                cyclic_prefix_size,
-                                                taper_size,
+                                                cyclic_prefix,
+                                                taper,
                                                 NULL,
                                                 frame_received,
                                                 radio);
@@ -567,6 +563,9 @@ void usage()
   printf("    with a different id will be ignored.\n");
   printf("  -m <modulation>  (default: qpsk)\n");
   printf("    Modulation to use for the subcarriers.\n");
+  printf("  -n <subcarriers[,cyclic prefix[,taper]]>  (default: 64,16,4)\n");
+  printf("    Number of subcarriers, cyclic prefix length and taper length\n");
+  printf("    of the OFDM transmission.\n");
   printf("  -o <offset>  (default: 0 Hz, can be negative)\n");
   printf("    Set the central frequency of the transceiver 'offset' Hz\n");
   printf("    lower than the signal frequency to send or receive.\n");
@@ -693,6 +692,51 @@ int get_modulation_scheme(char *str, modulation_scheme *subcarrier_modulation)
   }
 }
 
+int get_ofdm_configuration(char *str, unsigned int *subcarriers,
+                           unsigned int *cyclic_prefix, unsigned int *taper)
+{
+  unsigned int size = strlen(str);
+  char spec[size + 1];
+  char *separation1 = NULL;
+  char *separation2 = NULL;
+
+  strcpy(spec, str);
+  if((separation1 = strchr(spec, ',')) != NULL)
+  {
+    *separation1 = '\0';
+    if((separation2 = strchr(separation1 + 1, ',')) != NULL)
+    {
+      *separation2 = '\0';
+    }
+  }
+
+  *subcarriers = strtoul(spec, NULL, 10);
+  if(*subcarriers == 0)
+  {
+    return(-1);
+  }
+
+  if(separation1 != NULL)
+  {
+    *cyclic_prefix = strtoul(separation1 + 1, NULL, 10);
+  }
+  else
+  {
+    *cyclic_prefix = *subcarriers / 4;
+  }
+
+  if(separation2 != NULL)
+  {
+    *taper = strtoul(separation2 + 1, NULL, 10);
+  }
+  else
+  {
+    *taper = *cyclic_prefix / 4;
+  }
+
+  return(0);
+}
+
 int main(int argc, char **argv)
 {
   int opt;
@@ -708,13 +752,16 @@ int main(int argc, char **argv)
   fec_scheme inner_fec = LIQUID_FEC_HAMMING128;
   fec_scheme outer_fec = LIQUID_FEC_NONE;
   modulation_scheme subcarrier_modulation = LIQUID_MODEM_QPSK;
+  unsigned int subcarriers = 64;
+  unsigned int cyclic_prefix = 16;
+  unsigned int taper = 4;
   char *soapysdr_driver = "";
 
   bzero(&radio, sizeof(radio));
   radio.type = SOAPYSDR;
   radio.frequency = 434000000;
 
-  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:o:r:s:tv")) != -1)
+  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:n:o:r:s:tv")) != -1)
   {
     switch(opt)
     {
@@ -781,6 +828,14 @@ int main(int argc, char **argv)
       if(get_modulation_scheme(optarg, &subcarrier_modulation) != 0)
       {
         fprintf(stderr, "Error: Unknown modulation schemes: '%s'\n", optarg);
+        return(-1);
+      }
+      break;
+
+    case 'n':
+      if(get_ofdm_configuration(optarg, &subcarriers, &cyclic_prefix, &taper) != 0)
+      {
+        fprintf(stderr, "Error: Invalid OFDM configuration: '%s'\n", optarg);
         return(-1);
       }
       break;
@@ -874,11 +929,13 @@ int main(int argc, char **argv)
     if(emit)
     {
       send_frames(&radio, sample_rate, bit_rate, crc,
-                  inner_fec, outer_fec, subcarrier_modulation);
+                  inner_fec, outer_fec, subcarrier_modulation,
+                  subcarriers, cyclic_prefix, taper);
     }
     else
     {
-      receive_frames(&radio, sample_rate, bit_rate, subcarrier_modulation);
+      receive_frames(&radio, sample_rate, bit_rate, subcarrier_modulation,
+                     subcarriers, cyclic_prefix, taper);
     }
     break;
 
@@ -918,7 +975,8 @@ int main(int argc, char **argv)
       }
       SoapySDRDevice_activateStream(radio.device.soapysdr, radio.stream, 0, 0, 0);
       send_frames(&radio, sample_rate, bit_rate, crc,
-                  inner_fec, outer_fec, subcarrier_modulation);
+                  inner_fec, outer_fec, subcarrier_modulation,
+                  subcarriers, cyclic_prefix, taper);
     }
     else
     {
@@ -948,7 +1006,8 @@ int main(int argc, char **argv)
         return(-1);
       }
       SoapySDRDevice_activateStream(radio.device.soapysdr, radio.stream, 0, 0, 0);
-      receive_frames(&radio, sample_rate, bit_rate, subcarrier_modulation);
+      receive_frames(&radio, sample_rate, bit_rate, subcarrier_modulation,
+                     subcarriers, cyclic_prefix, taper);
     }
     SoapySDRDevice_deactivateStream(radio.device.soapysdr, radio.stream, 0, 0);
     SoapySDRDevice_closeStream(radio.device.soapysdr, radio.stream);

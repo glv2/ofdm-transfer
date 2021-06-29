@@ -2,7 +2,7 @@ ofdm-transfer
 =============
 
 ofdm-transfer is a command-line program to send or receive data by software
-defined radio using the OFDM modulation (64 subcarriers).
+defined radio using the OFDM modulation.
 
 
 ## Usage
@@ -30,6 +30,9 @@ Options:
     with a different id will be ignored.
   -m <modulation>  (default: qpsk)
     Modulation to use for the subcarriers.
+  -n <subcarriers[,cyclic prefix[,taper]]>  (default: 64,16,4)
+    Number of subcarriers, cyclic prefix length and taper length
+    of the OFDM transmission.
   -o <offset>  (default: 0 Hz, can be negative)
     Set the central frequency of the transceiver 'offset' Hz
     lower than the signal frequency to send or receive.

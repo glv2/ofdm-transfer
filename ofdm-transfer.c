@@ -313,12 +313,14 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
   unsigned char payload[payload_size];
   int r;
   unsigned int n;
+  unsigned int i;
   unsigned int frame_samples_size = (bit_rate * samples_per_bit) / 20; /* 50 ms */
   unsigned int samples_size = ceilf((frame_samples_size + delay) * resampling_ratio);
   int frame_complete;
   float frequency_offset = (float) radio->frequency - radio->center_frequency;
   float center_frequency = frequency_offset / sample_rate;
   nco_crcf oscillator = nco_crcf_create(LIQUID_NCO);
+  float maximum_amplitude = 5;
   unsigned int counter = 0;
   complex float *frame_samples = malloc(frame_samples_size * sizeof(complex float));
   complex float *samples = malloc(samples_size * sizeof(complex float));
@@ -371,9 +373,17 @@ void send_frames(radio_t *radio, float sample_rate, unsigned int bit_rate,
             break;
           }
         }
-        /* Reduce the amplitude of samples because the frame generator
-         * may produce samples with an amplitude greater than 1.0 */
-        liquid_vectorcf_mulscalar(frame_samples, n, 0.2, frame_samples);
+        /* Reduce the amplitude of samples because the frame generator and
+         * the resampler may produce samples with an amplitude greater than
+         * 1.0 depending on the number of carriers and resampling ratio */
+        for(i = 0; i < n; i++)
+        {
+          if(cabsf(frame_samples[i]) > maximum_amplitude)
+          {
+            maximum_amplitude = cabsf(frame_samples[i]);
+          }
+        }
+        liquid_vectorcf_mulscalar(frame_samples, n, 0.9 / maximum_amplitude, frame_samples);
         msresamp_crcf_execute(resampler, frame_samples, n, samples, &n);
         if(frequency_offset != 0)
         {

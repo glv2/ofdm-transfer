@@ -21,7 +21,8 @@
     (build-system gnu-build-system)
     (native-inputs
      `(("autoconf" ,autoconf)
-       ("automake" ,automake)))
+       ("automake" ,automake)
+       ("libtool" ,libtool)))
     (inputs
      `(("liquid-dsp" ,liquid-dsp)
        ("soapysdr" ,soapysdr)))

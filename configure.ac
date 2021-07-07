@@ -1,10 +1,12 @@
 AC_INIT(ofdm-transfer, 1.0.0)
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR(ofdm-transfer.c)
+AC_CONFIG_SRCDIR(src/ofdm-transfer.c)
+AC_CONFIG_MACRO_DIRS([m4])
 
 dnl Check for toolchain and install components
 AC_PROG_CC
 AC_PROG_INSTALL
+LT_INIT([shared disable-static])
 
 dnl Check for standard headers
 AC_CHECK_HEADERS([complex.h fcntl.h signal.h stdio.h stdlib.h string.h strings.h unistd.h])

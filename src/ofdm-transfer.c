@@ -606,7 +606,7 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
     fprintf(stderr, "Error: Memory allocation failed\n");
     return(NULL);
   }
-  bzero(transfer, sizeof(ofdm_transfer_t));
+  bzero(transfer, sizeof(struct ofdm_transfer_s));
 
   if(strcasecmp(radio_driver, "io") == 0)
   {

@@ -89,6 +89,9 @@ void ofdm_transfer_stop_all();
 /* Print list of detected software defined radios */
 void ofdm_transfer_print_available_radios();
 
+/* Print list of supported subcarrier modulations */
+void ofdm_transfer_print_available_subcarrier_modulations();
+
 /* Print list of supported forward error codes */
 void ofdm_transfer_print_available_forward_error_codes();
 

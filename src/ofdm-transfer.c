@@ -942,6 +942,18 @@ void ofdm_transfer_print_available_radios()
   SoapySDRKwargsList_clear(devices, size);
 }
 
+void ofdm_transfer_print_available_subcarrier_modulations()
+{
+  printf("  - bpsk\n");
+  printf("  - qpsk\n");
+  printf("  - psk8\n");
+  printf("  - apsk16\n");
+  printf("  - apsk32\n");
+  printf("  - apsk64\n");
+  printf("  - apsk128\n");
+  printf("  - apsk256\n");
+}
+
 void ofdm_transfer_print_available_forward_error_codes()
 {
   liquid_print_fec_schemes();

@@ -99,14 +99,7 @@ void usage()
   ofdm_transfer_print_available_radios();
   printf("\n");
   printf("Available subcarrier modulations:\n");
-  printf("  - bpsk\n");
-  printf("  - qpsk\n");
-  printf("  - psk8\n");
-  printf("  - apsk16\n");
-  printf("  - apsk32\n");
-  printf("  - apsk64\n");
-  printf("  - apsk128\n");
-  printf("  - apsk256\n");
+  ofdm_transfer_print_available_subcarrier_modulations();
   printf("\n");
   printf("Available forward error correction codes:\n");
   ofdm_transfer_print_available_forward_error_codes();

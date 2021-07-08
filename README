@@ -130,3 +130,10 @@ library, the following codes should also be available:
   - v29p67: convolutional r6/7 K=9 (punctured)
   - v29p78: convolutional r7/8 K=9 (punctured)
   - rs8: Reed-Solomon, 223/255
+
+
+## Library
+
+You can add OFDM transfer support to your programs easily by using the
+'libofdm-transfer' library.
+The API is described in the 'ofdm-transfer.h' file.

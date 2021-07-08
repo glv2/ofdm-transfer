@@ -8,7 +8,7 @@
 (define ofdm-transfer
   (package
     (name "ofdm-transfer")
-    (version "1.0.0")
+    (version "1.1.0")
     (source
      (origin
        (method git-fetch)
@@ -17,7 +17,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "015r4vy859cn4n5w5anm0fmyd4plf9gs7x2lvm1ari4fv7fi63q5"))))
+        (base32 "1nypwx5h873zgjycavmanb6ifwax2r5zj7nzdfb80ia7wbzxq5cx"))))
     (build-system gnu-build-system)
     (native-inputs
      `(("autoconf" ,autoconf)

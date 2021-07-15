@@ -77,7 +77,7 @@ int main()
   int samples_fd = mkstemp(samples_file);
   int ok = 0;
 
-  fprintf(stderr, "Test: Default parameters\n");
+  fprintf(stderr, "Test: Send and receive file\n");
 
   if((message_fd == -1) || (decoded_fd == -1) || (samples_fd == -1))
   {

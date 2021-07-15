@@ -11,10 +11,13 @@ ofdm_transfer_LDADD = libofdm-transfer.la
 
 include_HEADERS = src/ofdm-transfer.h
 
-check_PROGRAMS = tests/test-library
-tests_test_library_SOURCES = tests/test-library.c
-tests_test_library_CFLAGS = -I src
-tests_test_library_LDADD = libofdm-transfer.la
-TESTS = tests/test-library tests/test-program.sh
+check_PROGRAMS = tests/test-library-callback tests/test-library-file
+tests_test_library_callback_SOURCES = tests/test-library-callback.c
+tests_test_library_callback_CFLAGS = -I src
+tests_test_library_callback_LDADD = libofdm-transfer.la
+tests_test_library_file_SOURCES = tests/test-library-file.c
+tests_test_library_file_CFLAGS = -I src
+tests_test_library_file_LDADD = libofdm-transfer.la
+TESTS = tests/test-library-callback tests/test-library-file tests/test-program.sh
 
 EXTRA_DIST = tests/test-program.sh

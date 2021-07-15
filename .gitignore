@@ -17,9 +17,12 @@ Makefile.in
 missing
 test-driver
 test-suite.log
-tests/test-library
-tests/test-library.log
-tests/test-library.trs
+tests/test-library-file
+tests/test-library-file.log
+tests/test-library-file.trs
+tests/test-library-callback
+tests/test-library-callback.log
+tests/test-library-callback.trs
 tests/test-program.sh.log
 tests/test-program.sh.trs
 *.la

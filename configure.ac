@@ -1,4 +1,4 @@
-AC_INIT(ofdm-transfer, 1.1.0)
+AC_INIT(ofdm-transfer, 1.2.0)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(src/ofdm-transfer.c)
 AC_CONFIG_MACRO_DIRS([m4])

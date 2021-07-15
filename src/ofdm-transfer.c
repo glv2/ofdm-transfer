@@ -81,6 +81,8 @@ struct ofdm_transfer_s
   char id[5];
   FILE *dump;
   unsigned char stop;
+  int (*data_callback)(void *, unsigned char *, unsigned int);
+  void *callback_context;
 };
 
 unsigned char stop = 0;
@@ -103,10 +105,11 @@ void dump_samples(ofdm_transfer_t transfer,
   fwrite(samples, sizeof(complex float), samples_size, transfer->dump);
 }
 
-int read_data(ofdm_transfer_t transfer,
+int read_data(void *context,
               unsigned char *payload,
               unsigned int payload_size)
 {
+  ofdm_transfer_t transfer = (ofdm_transfer_t) context;
   int n;
 
   if(feof(transfer->file))
@@ -123,15 +126,19 @@ int read_data(ofdm_transfer_t transfer,
   return(n);
 }
 
-void write_data(ofdm_transfer_t transfer,
-                unsigned char *payload,
-                unsigned int payload_size)
+int write_data(void *context,
+               unsigned char *payload,
+               unsigned int payload_size)
 {
+  ofdm_transfer_t transfer = (ofdm_transfer_t) context;
+
   fwrite(payload, 1, payload_size, transfer->file);
   if(transfer->file == stdout)
   {
     fflush(transfer->file);
   }
+
+  return(payload_size);
 }
 
 void send_to_radio(ofdm_transfer_t transfer,
@@ -385,7 +392,7 @@ void send_frames(ofdm_transfer_t transfer)
 
   while((!stop) && (!transfer->stop))
   {
-    r = read_data(transfer, payload, payload_size);
+    r = transfer->data_callback(transfer->callback_context, payload, payload_size);
     if(r < 0)
     {
       break;
@@ -506,7 +513,7 @@ int frame_received(unsigned char *header,
   }
   else
   {
-    write_data(transfer, payload, payload_size);
+    transfer->data_callback(transfer->callback_context, payload, payload_size);
   }
   return(0);
 }
@@ -579,26 +586,28 @@ void receive_frames(ofdm_transfer_t transfer)
   ofdmflexframesync_destroy(frame_synchronizer);
 }
 
-ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
-                                     unsigned char emit,
-                                     char *file,
-                                     unsigned long int sample_rate,
-                                     unsigned int bit_rate,
-                                     unsigned long int frequency,
-                                     long int frequency_offset,
-                                     unsigned int gain,
-                                     float ppm,
-                                     char *subcarrier_modulation,
-                                     unsigned int subcarriers,
-                                     unsigned int cyclic_prefix_length,
-                                     unsigned int taper_length,
-                                     char *inner_fec,
-                                     char *outer_fec,
-                                     char *id,
-                                     char *dump)
+ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
+                                              unsigned char emit,
+                                              int (*data_callback)(void *,
+                                                                   unsigned char *,
+                                                                   unsigned int),
+                                              void *callback_context,
+                                              unsigned long int sample_rate,
+                                              unsigned int bit_rate,
+                                              unsigned long int frequency,
+                                              long int frequency_offset,
+                                              unsigned int gain,
+                                              float ppm,
+                                              char *subcarrier_modulation,
+                                              unsigned int subcarriers,
+                                              unsigned int cyclic_prefix_length,
+                                              unsigned int taper_length,
+                                              char *inner_fec,
+                                              char *outer_fec,
+                                              char *id,
+                                              char *dump)
 {
   int direction;
-  int flags;
   ofdm_transfer_t transfer = malloc(sizeof(struct ofdm_transfer_s));
 
   if(transfer == NULL)
@@ -619,37 +628,9 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
 
   transfer->stop = 0;
   transfer->emit = emit;
-
-  if(file)
-  {
-    if(emit)
-    {
-      transfer->file = fopen(file, "rb");
-    }
-    else
-    {
-      transfer->file = fopen(file, "wb");
-    }
-    if(transfer->file == NULL)
-    {
-      fprintf(stderr, "Error: Failed to open '%s'\n", file);
-      free(transfer);
-      return(NULL);
-    }
-  }
-  else
-  {
-    if(emit)
-    {
-      transfer->file = stdin;
-      flags = fcntl(STDIN_FILENO, F_GETFL);
-      fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
-    }
-    else
-    {
-      transfer->file = stdout;
-    }
-  }
+  transfer->file = NULL;
+  transfer->data_callback = data_callback;
+  transfer->callback_context = callback_context;
 
   if(sample_rate != 0)
   {
@@ -814,11 +795,93 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
   return(transfer);
 }
 
+ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
+                                     unsigned char emit,
+                                     char *file,
+                                     unsigned long int sample_rate,
+                                     unsigned int bit_rate,
+                                     unsigned long int frequency,
+                                     long int frequency_offset,
+                                     unsigned int gain,
+                                     float ppm,
+                                     char *subcarrier_modulation,
+                                     unsigned int subcarriers,
+                                     unsigned int cyclic_prefix_length,
+                                     unsigned int taper_length,
+                                     char *inner_fec,
+                                     char *outer_fec,
+                                     char *id,
+                                     char *dump)
+{
+  int flags;
+  ofdm_transfer_t transfer;
+
+  transfer = ofdm_transfer_create_callback(radio_driver,
+                                           emit,
+                                           emit ? read_data : write_data,
+                                           NULL,
+                                           sample_rate,
+                                           bit_rate,
+                                           frequency,
+                                           frequency_offset,
+                                           gain,
+                                           ppm,
+                                           subcarrier_modulation,
+                                           subcarriers,
+                                           cyclic_prefix_length,
+                                           taper_length,
+                                           inner_fec,
+                                           outer_fec,
+                                           id,
+                                           dump);
+  if(transfer == NULL)
+  {
+    return(NULL);
+  }
+
+  transfer->callback_context = transfer;
+  if(file)
+  {
+    if(emit)
+    {
+      transfer->file = fopen(file, "rb");
+    }
+    else
+    {
+      transfer->file = fopen(file, "wb");
+    }
+    if(transfer->file == NULL)
+    {
+      fprintf(stderr, "Error: Failed to open '%s'\n", file);
+      free(transfer);
+      return(NULL);
+    }
+  }
+  else
+  {
+    if(emit)
+    {
+      transfer->file = stdin;
+      flags = fcntl(STDIN_FILENO, F_GETFL);
+      fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+    }
+    else
+    {
+      transfer->file = stdout;
+    }
+  }
+
+  return(transfer);
+}
+
 void ofdm_transfer_free(ofdm_transfer_t transfer)
 {
   if(transfer)
   {
-    fclose(transfer->file);
+    if(transfer->file)
+    {
+      fclose(transfer->file);
+    }
     if(transfer->dump)
     {
       fclose(transfer->dump);

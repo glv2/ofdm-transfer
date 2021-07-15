@@ -73,6 +73,46 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                      char *id,
                                      char *dump);
 
+/* Initialize a new transfer using a callback
+ * The parameters are the same as ofdm_transfer_create() except that the 'file'
+ * string is replaced by the 'data_callback' function pointer and the
+ * 'callback_context' pointer.
+ * The callback function must have the following type:
+ *
+ *  int callback(void *context,
+ *               unsigned char *payload,
+ *               unsigned int payload_size)
+ *
+ * When emitting, the callback must try to read 'payload_size' bytes from
+ * somewhere and put them into 'payload'. It must return the number of bytes
+ * read, or -1 if the input stream is finished.
+ * When receiving, the callback must take 'payload_size' bytes from 'payload'
+ * and write them somewhere. It must return only when all the bytes have been
+ * written. The returned value should be the number of bytes written, but
+ * currently it is not used.
+ * The user-specified 'callback_context' pointer is passed to the callback
+ * as 'context'.
+ */
+ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
+                                              unsigned char emit,
+                                              int (*data_callback)(void *,
+                                                                   unsigned char *,
+                                                                   unsigned int),
+                                              void *callback_context,
+                                              unsigned long int sample_rate,
+                                              unsigned int bit_rate,
+                                              unsigned long int frequency,
+                                              long int frequency_offset,
+                                              unsigned int gain,
+                                              float ppm,
+                                              char *subcarrier_modulation,
+                                              unsigned int subcarriers,
+                                              unsigned int cyclic_prefix_length,
+                                              unsigned int taper_length,
+                                              char *inner_fec,
+                                              char *outer_fec,
+                                              char *id,
+                                              char *dump);
 
 /* Cleanup after a finished transfer */
 void ofdm_transfer_free(ofdm_transfer_t transfer);

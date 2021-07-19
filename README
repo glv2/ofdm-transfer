@@ -57,7 +57,10 @@ and the samples are sent to the radio.
 
 Instead of a real radio transceiver, the 'io' radio type uses
 standard input in 'receive' mode, and standard output in
-'transmit' mode. The samples must be in 'complex float' format
+'transmit' mode.
+The 'file=path-to-file' radio type reads/writes the samples
+from/to 'path-to-file'.
+The samples must be in 'complex float' format
 (32 bits for the real part, 32 bits for the imaginary part).
 
 

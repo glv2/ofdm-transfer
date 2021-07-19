@@ -47,11 +47,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 typedef enum
   {
     IO,
+    FILENAME,
     SOAPYSDR
   } radio_type_t;
 
 typedef union
 {
+  FILE *file;
   SoapySDRDevice *soapysdr;
 } radio_device_t;
 
@@ -165,6 +167,13 @@ void send_to_radio(ofdm_transfer_t transfer,
     fwrite(samples, sizeof(complex float), samples_size, stdout);
     break;
 
+  case FILENAME:
+    fwrite(samples,
+           sizeof(complex float),
+           samples_size,
+           transfer->radio_device.file);
+    break;
+
   case SOAPYSDR:
     n = 0;
     while((n < samples_size) && (!stop) && (!transfer->stop))
@@ -239,6 +248,13 @@ unsigned int receive_from_radio(ofdm_transfer_t transfer,
   {
   case IO:
     n = fread(samples, sizeof(complex float), samples_size, stdin);
+    break;
+
+  case FILENAME:
+    n = fread(samples,
+              sizeof(complex float),
+              samples_size,
+              transfer->radio_device.file);
     break;
 
   case SOAPYSDR:
@@ -556,7 +572,8 @@ void receive_frames(ofdm_transfer_t transfer)
   while((!stop) && (!transfer->stop))
   {
     n = receive_from_radio(transfer, samples, samples_size);
-    if((n == 0) && (transfer->radio_type == IO))
+    if((n == 0) &&
+       ((transfer->radio_type == IO) || (transfer->radio_type == FILENAME)))
     {
       break;
     }
@@ -620,6 +637,10 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
   if(strcasecmp(radio_driver, "io") == 0)
   {
     transfer->radio_type = IO;
+  }
+  else if(strncasecmp(radio_driver, "file=", 5) == 0)
+  {
+    transfer->radio_type = FILENAME;
   }
   else
   {
@@ -746,6 +767,23 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
   switch(transfer->radio_type)
   {
   case IO:
+    break;
+
+  case FILENAME:
+    if(emit)
+    {
+      transfer->radio_device.file = fopen(radio_driver + 5, "wb");
+    }
+    else
+    {
+      transfer->radio_device.file = fopen(radio_driver + 5, "rb");
+    }
+    if(transfer->radio_device.file == NULL)
+    {
+      fprintf(stderr, "Error: Failed to open '%s'\n", radio_driver + 5);
+      free(transfer);
+      return(NULL);
+    }
     break;
 
   case SOAPYSDR:
@@ -891,6 +929,10 @@ void ofdm_transfer_free(ofdm_transfer_t transfer)
     case IO:
       break;
 
+    case FILENAME:
+      fclose(transfer->radio_device.file);
+      break;
+
     case SOAPYSDR:
       SoapySDRDevice_deactivateStream(transfer->radio_device.soapysdr,
                                       transfer->radio_stream.soapysdr,
@@ -919,6 +961,13 @@ void ofdm_transfer_start(ofdm_transfer_t transfer)
     if(verbose)
     {
       fprintf(stderr, "Info: Using IO pseudo-radio\n");
+    }
+    break;
+
+  case FILENAME:
+    if(verbose)
+    {
+      fprintf(stderr, "Info: Using FILENAME pseudo-radio\n");
     }
     break;
 

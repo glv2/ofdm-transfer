@@ -92,7 +92,10 @@ void usage()
   printf("\n");
   printf("Instead of a real radio transceiver, the 'io' radio type uses\n");
   printf("standard input in 'receive' mode, and standard output in\n");
-  printf("'transmit' mode. The samples must be in 'complex float' format\n");
+  printf("'transmit' mode.\n");
+  printf("The 'file=path-to-file' radio type reads/writes the samples\n");
+  printf("from/to 'path-to-file'.\n");
+  printf("The samples must be in 'complex float' format\n");
   printf("(32 bits for the real part, 32 bits for the imaginary part).\n");
   printf("\n");
   printf("Available radios (via SoapySDR):\n");

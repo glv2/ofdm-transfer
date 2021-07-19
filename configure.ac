@@ -16,7 +16,7 @@ AC_CHECK_FUNCS([fcntl])
 AC_CHECK_FUNCS([signal])
 AC_CHECK_FUNCS([fclose feof fflush fopen fprintf fread fwrite printf])
 AC_CHECK_FUNCS([exit free malloc strtof strtol strtoul])
-AC_CHECK_FUNCS([bzero memcmp memcpy strcasecmp strchr strcpy strlen])
+AC_CHECK_FUNCS([bzero memcmp memcpy strcasecmp strchr strcpy strlen strncasecmp])
 AC_CHECK_FUNCS([getopt usleep])
 
 dnl Check for libraries

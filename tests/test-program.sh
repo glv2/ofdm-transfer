@@ -26,7 +26,7 @@ SAMPLES=$(mktemp -t samples.XXXXXX)
 
 echo "This is a test transmission using ofdm-transfer." > ${MESSAGE}
 
-function check_ok()
+function check_ok_io()
 {
     NAME=$1
     OPTIONS1=$2
@@ -38,7 +38,19 @@ function check_ok()
     diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
-function check_nok()
+function check_ok_file()
+{
+    NAME=$1
+    OPTIONS1=$2
+    OPTIONS2=$3
+
+    echo "Test: ${NAME}"
+    ./ofdm-transfer -t -r file=${SAMPLES} ${OPTIONS1} ${MESSAGE}
+    ./ofdm-transfer -r file=${SAMPLES} ${OPTIONS2} ${DECODED}
+    diff -q ${MESSAGE} ${DECODED} > /dev/null
+}
+
+function check_nok_io()
 {
     NAME=$1
     OPTIONS1=$2
@@ -50,26 +62,37 @@ function check_nok()
     ! diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
-check_ok "Default parameters" "" ""
-check_ok "Bit rate 1200" "-b 1200" "-b 1200"
-check_ok "Bit rate 9600" "-b 9600" "-b 9600"
-check_ok "Bit rate 400000" "-b 400000" "-b 400000"
-check_nok "Wrong bit rate 9600 19200" "-b 9600" "-b 19200"
-check_ok "Frequency offset 200000" "-o 200000" "-o 200000"
-check_ok "Frequency offset -123456" "-o -123456" "-o -123456"
-check_nok "Wrong frequency offset 200000 250000" "-o 200000" "-o 250000"
-check_ok "Sample rate 4000000" "-s 4000000" "-s 4000000"
-check_ok "Sample rate 10000000" "-s 10000000" "-s 10000000"
-check_nok "Wrong sample rate 1000000 2000000" "-s 1000000" "-s 2000000"
-check_ok "Modulation apsk16" "-m apsk16" "-m apsk16"
-check_nok "Wrong modulation apsk16 qpsk" "-m apsk16" "-m qpsk"
-check_ok "Subcarrier number 100" "-n 100" "-n 100"
-check_nok "Wrong subcarrier number 64 128" "-n 64" "-n 128"
-check_ok "FEC Hamming(7/4)" "-e h74" "-e h74"
-check_ok "FEC Golay(24/12) and repeat(3)" "-e g2412,rep3" "-e g2412,rep3"
-check_ok "Wrong FEC Hamming(7/4) Hamming(12/8)" "-e h74" "-e h128"
-check_ok "Id a1B2" "-i a1B2" "-i a1B2"
-check_nok "Wrong id ABCD ABC" "-i ABCD" "-i ABC"
+function check_nok_file()
+{
+    NAME=$1
+    OPTIONS1=$2
+    OPTIONS2=$3
+
+    echo "Test: ${NAME}"
+    ./ofdm-transfer -t -r file=${SAMPLES} ${OPTIONS1} ${MESSAGE}
+    ./ofdm-transfer -r file=${SAMPLES} ${OPTIONS2} ${DECODED}
+    ! diff -q ${MESSAGE} ${DECODED} > /dev/null
+}
+
+check_ok_io "Default parameters" "" ""
+check_ok_io "Bit rate 1200" "-b 1200" "-b 1200"
+check_ok_file "Bit rate 9600" "-b 9600" "-b 9600"
+check_ok_io "Bit rate 400000" "-b 400000" "-b 400000"
+check_nok_io "Wrong bit rate 9600 19200" "-b 9600" "-b 19200"
+check_ok_io "Frequency offset 200000" "-o 200000" "-o 200000"
+check_ok_file "Frequency offset -123456" "-o -123456" "-o -123456"
+check_nok_io "Wrong frequency offset 200000 250000" "-o 200000" "-o 250000"
+check_ok_io "Sample rate 4000000" "-s 4000000" "-s 4000000"
+check_ok_file "Sample rate 10000000" "-s 10000000" "-s 10000000"
+check_nok_io "Wrong sample rate 1000000 2000000" "-s 1000000" "-s 2000000"
+check_ok_io "Modulation apsk16" "-m apsk16" "-m apsk16"
+check_nok_file "Wrong modulation apsk16 qpsk" "-m apsk16" "-m qpsk"
+check_ok_file "Subcarrier number 100" "-n 100" "-n 100"
+check_nok_io "Wrong subcarrier number 64 128" "-n 64" "-n 128"
+check_ok_io "FEC Hamming(7/4)" "-e h74" "-e h74"
+check_ok_file "FEC Golay(24/12) and repeat(3)" "-e g2412,rep3" "-e g2412,rep3"
+check_ok_io "Id a1B2" "-i a1B2" "-i a1B2"
+check_nok_file "Wrong id ABCD ABC" "-i ABCD" "-i ABC"
 
 rm -f ${MESSAGE} ${DECODED} ${SAMPLES}
 echo "All tests passed."

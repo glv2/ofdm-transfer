@@ -54,6 +54,8 @@ unsigned char ofdm_transfer_is_verbose();
  *  - id: transfer id; when receiving, frames with a different id will be
  *        ignored
  *  - dump: if not NULL, write raw samples sent or received to this file
+ *
+ * If the transfer initialization fails, the function returns NULL.
  */
 ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                      unsigned char emit,

@@ -140,3 +140,6 @@ library, the following codes should also be available:
 You can add OFDM transfer support to your programs easily by using the
 'libofdm-transfer' library.
 The API is described in the 'ofdm-transfer.h' file.
+
+The 'echo-server' example program shows how to use the API to make a server
+receiving messages from clients and sending them back in reverse order.

@@ -6,6 +6,7 @@ configure
 depcomp
 .deps/
 .dirstamp
+examples/echo-server
 /ofdm-transfer
 install-sh
 .libs/

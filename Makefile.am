@@ -11,6 +11,12 @@ ofdm_transfer_LDADD = libofdm-transfer.la
 
 include_HEADERS = src/ofdm-transfer.h
 
+examplesdir =
+examples_PROGRAMS = examples/echo-server
+examples_echo_server_SOURCES = examples/echo-server.c
+examples_echo_server_CFLAGS = -I src
+examples_echo_server_LDADD = libofdm-transfer.la
+
 check_PROGRAMS = tests/test-library-callback tests/test-library-file
 tests_test_library_callback_SOURCES = tests/test-library-callback.c
 tests_test_library_callback_CFLAGS = -I src

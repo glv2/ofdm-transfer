@@ -196,6 +196,7 @@ void send_to_radio(ofdm_transfer_t transfer,
     {
       /* Complete the remaining buffer to ensure that SoapySDR
        * will process it */
+      flags = SOAPY_SDR_END_BURST;
       size = SoapySDRDevice_getStreamMTU(transfer->radio_device.soapysdr,
                                          transfer->radio_stream.soapysdr);
       bzero(samples, samples_size * sizeof(complex float));
@@ -215,7 +216,6 @@ void send_to_radio(ofdm_transfer_t transfer,
           size -= r;
         }
       }
-      flags = SOAPY_SDR_END_BURST;
       do
       {
         r = SoapySDRDevice_readStreamStatus(transfer->radio_device.soapysdr,
@@ -228,7 +228,7 @@ void send_to_radio(ofdm_transfer_t transfer,
       while((r != SOAPY_SDR_UNDERFLOW) && (!stop) && (!transfer->stop));
 
       /* Give enough time to the hardware to send the last samples */
-      usleep(1000000);
+      usleep(200000);
     }
     break;
   }

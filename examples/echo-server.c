@@ -171,7 +171,7 @@ void server(unsigned long int frequency)
     printf("\nReceived: %s\n", data);
     process_request(data, size);
     printf("Sending: %s\n", data);
-    sleep(2);
+    usleep(500000);
     if(stop_loop)
     {
       return;

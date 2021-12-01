@@ -377,7 +377,7 @@ void send_frames(ofdm_transfer_t transfer)
   int frame_complete;
   float center_frequency = (float) transfer->frequency_offset / transfer->sample_rate;
   nco_crcf oscillator = nco_crcf_create(LIQUID_NCO);
-  float maximum_amplitude = 5;
+  float maximum_amplitude = 1;
   unsigned int counter = 0;
   unsigned char *payload = malloc(payload_size);
   complex float *frame_samples = malloc(frame_samples_size * sizeof(complex float));
@@ -434,6 +434,7 @@ void send_frames(ofdm_transfer_t transfer)
         /* Reduce the amplitude of samples because the frame generator and
          * the resampler may produce samples with an amplitude greater than
          * 1.0 depending on the number of carriers and resampling ratio */
+        maximum_amplitude = 1;
         for(i = 0; i < n; i++)
         {
           if(cabsf(frame_samples[i]) > maximum_amplitude)
@@ -443,7 +444,7 @@ void send_frames(ofdm_transfer_t transfer)
         }
         liquid_vectorcf_mulscalar(frame_samples,
                                   n,
-                                  0.9 / maximum_amplitude,
+                                  0.75 / maximum_amplitude,
                                   frame_samples);
         msresamp_crcf_execute(resampler, frame_samples, n, samples, &n);
         if(transfer->frequency_offset != 0)

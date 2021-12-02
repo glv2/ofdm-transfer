@@ -226,9 +226,6 @@ void send_to_radio(ofdm_transfer_t transfer,
                                             10000);
       }
       while((r != SOAPY_SDR_UNDERFLOW) && (!stop) && (!transfer->stop));
-
-      /* Give enough time to the hardware to send the last samples */
-      usleep(200000);
     }
     break;
   }

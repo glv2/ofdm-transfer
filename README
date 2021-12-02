@@ -44,6 +44,10 @@ Options:
     Use transmit mode.
   -v
     Print debug messages.
+  -w <delay>  (default: 0.0 s)
+    Wait a little before switching the radio off.
+    This can be useful if the hardware needs some time to send
+    the last samples it has buffered.
 
 By default the program is in 'receive' mode.
 Use the '-t' option to use the 'transmit' mode.

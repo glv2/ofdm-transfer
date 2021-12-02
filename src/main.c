@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <math.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,6 +80,10 @@ void usage()
   printf("    Use transmit mode.\n");
   printf("  -v\n");
   printf("    Print debug messages.\n");
+  printf("  -w <delay>  (default: 0.0 s)\n");
+  printf("    Wait a little before switching the radio off.\n");
+  printf("    This can be useful if the hardware needs some time to send\n");
+  printf("    the last samples it has buffered.\n");
   printf("\n");
   printf("By default the program is in 'receive' mode.\n");
   printf("Use the '-t' option to use the 'transmit' mode.\n");
@@ -207,12 +212,15 @@ int main(int argc, char **argv)
   char *id = "";
   char *file = NULL;
   char *dump = NULL;
+  float final_delay = 0;
+  unsigned int final_delay_sec = 0;
+  unsigned int final_delay_usec = 0;
   int opt;
 
   strcpy(inner_fec, "h128");
   strcpy(outer_fec, "none");
 
-  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:n:o:r:s:tv")) != -1)
+  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:n:o:r:s:tvw:")) != -1)
   {
     switch(opt)
     {
@@ -279,6 +287,10 @@ int main(int argc, char **argv)
       ofdm_transfer_set_verbose(1);
       break;
 
+    case 'w':
+      final_delay = strtof(optarg, NULL);
+      break;
+
     default:
       fprintf(stderr, "Error: Unknown parameter: '-%c %s'\n", opt, optarg);
       return(EXIT_FAILURE);
@@ -320,7 +332,20 @@ int main(int argc, char **argv)
     return(EXIT_FAILURE);
   }
   ofdm_transfer_start(transfer);
-  usleep(500000);
+  if(final_delay > 0)
+  {
+    /* Give enough time to the hardware to send the last samples */
+    final_delay_sec = floorf(final_delay);
+    final_delay_usec = (final_delay - final_delay_sec) * 1000000;
+    if(final_delay_sec > 0)
+    {
+      sleep(final_delay_sec);
+    }
+    if(final_delay_usec > 0)
+    {
+      usleep(final_delay_usec);
+    }
+  }
   ofdm_transfer_free(transfer);
 
   if(ofdm_transfer_is_verbose())

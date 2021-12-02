@@ -40,6 +40,9 @@ Options:
     Radio to use.
   -s <sample rate>  (default: 2000000 S/s)
     Sample rate to use.
+  -T <timeout>  (default: 0 s)
+    Number of seconds after which reception will be stopped if
+    no frame has been received. A timeout of 0 means no timeout.
   -t
     Use transmit mode.
   -v

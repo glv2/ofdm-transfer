@@ -113,7 +113,8 @@ int main()
                                        "h128",
                                        "none",
                                        "",
-                                       NULL);
+                                       NULL,
+                                       0);
   if(send == NULL)
   {
     fprintf(stderr, "Error: Failed to initialize transfer\n");
@@ -141,7 +142,8 @@ int main()
                                           "h128",
                                           "none",
                                           "",
-                                          NULL);
+                                          NULL,
+                                          0);
   if(receive == NULL)
   {
     fprintf(stderr, "Error: Failed to initialize transfer\n");

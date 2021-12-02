@@ -52,8 +52,10 @@ unsigned char ofdm_transfer_is_verbose();
  *  - inner_fec: inner forward error correction code to use
  *  - outer_fec: outer forward error correction code to use
  *  - id: transfer id; when receiving, frames with a different id will be
- *        ignored
+ *    ignored
  *  - dump: if not NULL, write raw samples sent or received to this file
+ *  - timeout: number of seconds after which reception will be stopped if no
+ *    frame has been received; 0 means no timeout
  *
  * If the transfer initialization fails, the function returns NULL.
  */
@@ -73,7 +75,8 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                      char *inner_fec,
                                      char *outer_fec,
                                      char *id,
-                                     char *dump);
+                                     char *dump,
+                                     unsigned int timeout);
 
 /* Initialize a new transfer using a callback
  * The parameters are the same as ofdm_transfer_create() except that the 'file'
@@ -114,7 +117,8 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
                                               char *inner_fec,
                                               char *outer_fec,
                                               char *id,
-                                              char *dump);
+                                              char *dump,
+                                              unsigned int timeout);
 
 /* Cleanup after a finished transfer */
 void ofdm_transfer_free(ofdm_transfer_t transfer);

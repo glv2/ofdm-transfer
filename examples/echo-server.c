@@ -86,7 +86,8 @@ void transmit(unsigned char *data,
                                                            INNER_FEC,
                                                            OUTER_FEC,
                                                            "",
-                                                           NULL);
+                                                           NULL,
+                                                           0);
   if(transfer == NULL)
   {
     return;
@@ -132,7 +133,8 @@ void receive_1(unsigned char *data,
                                                            INNER_FEC,
                                                            OUTER_FEC,
                                                            "",
-                                                           NULL);
+                                                           NULL,
+                                                           0);
   if(transfer == NULL)
   {
     return;

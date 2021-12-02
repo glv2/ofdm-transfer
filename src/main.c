@@ -76,6 +76,9 @@ void usage()
   printf("    Radio to use.\n");
   printf("  -s <sample rate>  (default: 2000000 S/s)\n");
   printf("    Sample rate to use.\n");
+  printf("  -T <timeout>  (default: 0 s)\n");
+  printf("    Number of seconds after which reception will be stopped if\n");
+  printf("    no frame has been received. A timeout of 0 means no timeout.\n");
   printf("  -t\n");
   printf("    Use transmit mode.\n");
   printf("  -v\n");
@@ -215,12 +218,13 @@ int main(int argc, char **argv)
   float final_delay = 0;
   unsigned int final_delay_sec = 0;
   unsigned int final_delay_usec = 0;
+  unsigned int timeout = 0;
   int opt;
 
   strcpy(inner_fec, "h128");
   strcpy(outer_fec, "none");
 
-  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:n:o:r:s:tvw:")) != -1)
+  while((opt = getopt(argc, argv, "b:c:d:e:f:g:hi:m:n:o:r:s:T:tvw:")) != -1)
   {
     switch(opt)
     {
@@ -283,6 +287,10 @@ int main(int argc, char **argv)
       emit = 1;
       break;
 
+    case 'T':
+      timeout = strtoul(optarg, NULL, 10);
+      break;
+
     case 'v':
       ofdm_transfer_set_verbose(1);
       break;
@@ -325,7 +333,8 @@ int main(int argc, char **argv)
                                   inner_fec,
                                   outer_fec,
                                   id,
-                                  dump);
+                                  dump,
+                                  timeout);
   if(transfer == NULL)
   {
     fprintf(stderr, "Error: Failed to initialize transfer\n");

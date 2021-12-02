@@ -320,6 +320,7 @@ int main(int argc, char **argv)
     return(EXIT_FAILURE);
   }
   ofdm_transfer_start(transfer);
+  usleep(500000);
   ofdm_transfer_free(transfer);
 
   if(ofdm_transfer_is_verbose())

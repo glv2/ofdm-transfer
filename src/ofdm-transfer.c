@@ -367,7 +367,13 @@ void send_frames(ofdm_transfer_t transfer)
   unsigned int delay = ceilf(msresamp_crcf_get_delay(resampler));
   unsigned int header_size = 8;
   unsigned char header[header_size];
-  unsigned int payload_size = 1000;
+  float inner_fec_rate = fec_get_rate(transfer->inner_fec);
+  float outer_fec_rate = fec_get_rate(transfer->outer_fec);
+  float byte_rate = (transfer->bit_rate * inner_fec_rate * outer_fec_rate) / 8;
+  /* Try to make frames of approximately 500 ms, but containing at least
+   * 8 bytes of payload */
+  unsigned int payload_size = ((byte_rate / 2) > (header_size + 8)) ?
+                              (byte_rate / 2) - header_size : 8;
   int r;
   unsigned int n;
   unsigned int i;

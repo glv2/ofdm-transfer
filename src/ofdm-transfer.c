@@ -378,7 +378,8 @@ void send_frames(ofdm_transfer_t transfer)
   unsigned int n;
   unsigned int i;
   /* Process data by blocks of 50 ms */
-  unsigned int frame_samples_size = (transfer->bit_rate * samples_per_bit) / 20;
+  unsigned int frame_samples_size = ceilf((transfer->bit_rate *
+                                           samples_per_bit) / 20.0);
   unsigned int samples_size = ceilf((frame_samples_size + delay) * resampling_ratio);
   int frame_complete;
   float center_frequency = (float) transfer->frequency_offset / transfer->sample_rate;
@@ -553,7 +554,8 @@ void receive_frames(ofdm_transfer_t transfer)
   unsigned int delay = ceilf(msresamp_crcf_get_delay(resampler));
   unsigned int n;
   /* Process data by blocks of 50 ms */
-  unsigned int frame_samples_size = (transfer->bit_rate * samples_per_bit) / 20;
+  unsigned int frame_samples_size = ceilf((transfer->bit_rate *
+                                           samples_per_bit) / 20.0);
   unsigned int samples_size = floorf(frame_samples_size / resampling_ratio);
   nco_crcf oscillator = nco_crcf_create(LIQUID_NCO);
   complex float *frame_samples = malloc((frame_samples_size + delay) *
@@ -613,6 +615,10 @@ void receive_frames(ofdm_transfer_t transfer)
   }
   msresamp_crcf_execute(resampler, samples, delay, frame_samples, &n);
   ofdmflexframesync_execute(frame_synchronizer, frame_samples, n);
+  while(ofdmflexframesync_is_frame_open(frame_synchronizer))
+  {
+    ofdmflexframesync_execute(frame_synchronizer, samples, 1);
+  }
 
   free(samples);
   free(frame_samples);

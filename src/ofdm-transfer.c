@@ -558,7 +558,8 @@ void receive_frames(ofdm_transfer_t transfer)
   nco_crcf oscillator = nco_crcf_create(LIQUID_NCO);
   complex float *frame_samples = malloc((frame_samples_size + delay) *
                                         sizeof(complex float));
-  complex float *samples = malloc(samples_size * sizeof(complex float));
+  complex float *samples = malloc((samples_size + delay) *
+                                  sizeof(complex float));
 
   if((frame_samples == NULL) || (samples == NULL))
   {

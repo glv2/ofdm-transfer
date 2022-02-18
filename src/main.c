@@ -2,7 +2,7 @@
 This file is part of ofdm-transfer, a program to send or receive data
 by software defined radio using the OFDM modulation.
 
-Copyright 2021 Guillaume LE VAILLANT
+Copyright 2021-2022 Guillaume LE VAILLANT
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void signal_handler(int signum)
 
 void usage()
 {
-  printf("ofdm-transfer version 1.3.0\n");
+  printf("ofdm-transfer version 1.4.0\n");
   printf("\n");
   printf("Usage: ofdm-transfer [options] [filename]\n");
   printf("\n");

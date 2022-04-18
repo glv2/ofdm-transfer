@@ -145,6 +145,44 @@ library, the following codes should also be available:
   - rs8: Reed-Solomon, 223/255
 
 
+## Examples
+
+Send a file at 9600 b/s on 434 MHz using a HackRF:
+
+    ofdm-transfer -t \
+                  -r driver=hackrf \
+                  -s 4000000 \
+                  -f 434000000 \
+                  -o 100000 \
+                  -b 9600 \
+                  -g 30 \
+                  -w 1 \
+                  input_file
+
+Receive a file at 9600 b/s on 434 MHz using a RTL-SDR:
+
+    ofdm-transfer -r driver=rtlsdr \
+                  -s 2000000 \
+                  -f 434000000 \
+                  -o 100000 \
+                  -b 9600 \
+                  -g 20 \
+                  -T 30 \
+                  output_file
+
+Generate audio samples for a 1200 b/s transmission centered at 1500 Hz and play
+them:
+
+    ofdm-transfer -t \
+                  -r file=/tmp/samples.s16 \
+                  -a \
+                  -r 48000 \
+                  -f 1500 \
+                  -b 1200 \
+                  input_file
+    aplay -f S16_LE -r 48000 -c 1 /tmp/samples.s16
+
+
 ## Library
 
 You can add OFDM transfer support to your programs easily by using the

@@ -10,6 +10,8 @@ defined radio using the OFDM modulation.
 ofdm-transfer [options] [filename]
 
 Options:
+  -a
+    Use audio samples instead of IQ samples.
   -b <bit rate>  (default: 38400 b/s)
     Bit rate of the OFDM transmission.
   -c <ppm>  (default: 0.0, can be negative)
@@ -67,8 +69,9 @@ standard input in 'receive' mode, and standard output in
 'transmit' mode.
 The 'file=path-to-file' radio type reads/writes the samples
 from/to 'path-to-file'.
-The samples must be in 'complex float' format
+The IQ samples must be in 'complex float' format
 (32 bits for the real part, 32 bits for the imaginary part).
+The audio samples must be in 'signed integer' format (16 bits).
 
 
 ## Compilation

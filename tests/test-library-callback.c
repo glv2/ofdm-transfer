@@ -2,7 +2,7 @@
 This file is part of ofdm-transfer, a program to send or receive data
 by software defined radio using the OFDM modulation.
 
-Copyright 2021 Guillaume LE VAILLANT
+Copyright 2021-2022 Guillaume LE VAILLANT
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -114,6 +114,7 @@ int main()
                                        "none",
                                        "",
                                        NULL,
+                                       0,
                                        0);
   if(send == NULL)
   {
@@ -143,6 +144,7 @@ int main()
                                           "none",
                                           "",
                                           NULL,
+                                          0,
                                           0);
   if(receive == NULL)
   {

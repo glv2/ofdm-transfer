@@ -3,7 +3,7 @@
 # This file is part of ofdm-transfer, a program to send or receive data
 # by software defined radio using the OFDM modulation.
 #
-# Copyright 2021 Guillaume LE VAILLANT
+# Copyright 2021-2022 Guillaume LE VAILLANT
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -93,6 +93,12 @@ check_ok_io "FEC Hamming(7/4)" "-e h74" "-e h74"
 check_ok_file "FEC Golay(24/12) and repeat(3)" "-e g2412,rep3" "-e g2412,rep3"
 check_ok_io "Id a1B2" "-i a1B2" "-i a1B2"
 check_nok_file "Wrong id ABCD ABC" "-i ABCD" "-i ABC"
+check_ok_file "Audio frequency 1500" \
+              "-a -s 48000 -f 1500 -b 1200" \
+              "-a -s 48000 -f 1500 -b 1200"
+check_nok_io "Wrong audio frequency 1500 2500" \
+             "-a -s 48000 -f 1500 -b 1200" \
+             "-a -s 48000 -f 2500 -b 1200"
 
 rm -f ${MESSAGE} ${DECODED} ${SAMPLES}
 echo "All tests passed."

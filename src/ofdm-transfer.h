@@ -2,7 +2,7 @@
 This file is part of ofdm-transfer, a program to send or receive data
 by software defined radio using the OFDM modulation.
 
-Copyright 2021 Guillaume LE VAILLANT
+Copyright 2021-2022 Guillaume LE VAILLANT
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ unsigned char ofdm_transfer_is_verbose();
  *  - dump: if not NULL, write raw samples sent or received to this file
  *  - timeout: number of seconds after which reception will be stopped if no
  *    frame has been received; 0 means no timeout
+ *  - audio: 0 to use IQ samples, 1 to use audio samples
  *
  * If the transfer initialization fails, the function returns NULL.
  */
@@ -76,7 +77,8 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                      char *outer_fec,
                                      char *id,
                                      char *dump,
-                                     unsigned int timeout);
+                                     unsigned int timeout,
+                                     unsigned char audio);
 
 /* Initialize a new transfer using a callback
  * The parameters are the same as ofdm_transfer_create() except that the 'file'
@@ -118,7 +120,8 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
                                               char *outer_fec,
                                               char *id,
                                               char *dump,
-                                              unsigned int timeout);
+                                              unsigned int timeout,
+                                              unsigned char audio);
 
 /* Cleanup after a finished transfer */
 void ofdm_transfer_free(ofdm_transfer_t transfer);

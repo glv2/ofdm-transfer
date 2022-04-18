@@ -2,7 +2,7 @@
 Example of use of ofdm-transfer's API to make a server receiving
 messages from clients and sending them back in reverse order.
 
-Copyright 2021 Guillaume LE VAILLANT
+Copyright 2021-2022 Guillaume LE VAILLANT
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -87,6 +87,7 @@ void transmit(unsigned char *data,
                                                            OUTER_FEC,
                                                            "",
                                                            NULL,
+                                                           0,
                                                            0);
   if(transfer == NULL)
   {
@@ -134,6 +135,7 @@ void receive_1(unsigned char *data,
                                                            OUTER_FEC,
                                                            "",
                                                            NULL,
+                                                           0,
                                                            0);
   if(transfer == NULL)
   {

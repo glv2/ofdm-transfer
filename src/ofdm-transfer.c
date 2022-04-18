@@ -2,7 +2,7 @@
 This file is part of ofdm-transfer, a program to send or receive data
 by software defined radio using the OFDM modulation.
 
-Copyright 2021 Guillaume LE VAILLANT
+Copyright 2021-2022 Guillaume LE VAILLANT
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -88,6 +88,7 @@ struct ofdm_transfer_s
   void *callback_context;
   unsigned int timeout;
   time_t timeout_start;
+  firhilbf audio_converter;
 };
 
 unsigned char stop = 0;
@@ -146,6 +147,48 @@ int write_data(void *context,
   return(payload_size);
 }
 
+void write_audio(ofdm_transfer_t transfer,
+                 complex float *samples,
+                 unsigned int samples_size,
+                 FILE *output)
+{
+  unsigned int n;
+  float audio_samples[2];
+  short int audio_samples_s16[2];
+
+  for(n = 0; n < samples_size; n++)
+  {
+    firhilbf_interp_execute(transfer->audio_converter,
+                            samples[n],
+                            audio_samples);
+    audio_samples_s16[0] = audio_samples[0] * 32767;
+    audio_samples_s16[1] = audio_samples[1] * 32767;
+    fwrite(audio_samples_s16, sizeof(short int), 2, output);
+  }
+}
+
+unsigned int read_audio(ofdm_transfer_t transfer,
+                        complex float *samples,
+                        unsigned int samples_size,
+                        FILE* input)
+{
+  unsigned int n = 0;
+  float audio_samples[2];
+  short int audio_samples_s16[2];
+
+  while((n < samples_size) &&
+        (fread(audio_samples_s16, sizeof(short int), 2, input) == 2))
+  {
+    audio_samples[0] = audio_samples_s16[0] / 32768.0;
+    audio_samples[1] = audio_samples_s16[1] / 32768.0;
+    firhilbf_decim_execute(transfer->audio_converter,
+                           audio_samples,
+                           &samples[n]);
+    n++;
+  }
+  return(n);
+}
+
 void send_to_radio(ofdm_transfer_t transfer,
                    complex float *samples,
                    unsigned int samples_size,
@@ -167,14 +210,28 @@ void send_to_radio(ofdm_transfer_t transfer,
   switch(transfer->radio_type)
   {
   case IO:
-    fwrite(samples, sizeof(complex float), samples_size, stdout);
+    if(transfer->audio_converter)
+    {
+      write_audio(transfer, samples, samples_size, stdout);
+    }
+    else
+    {
+      fwrite(samples, sizeof(complex float), samples_size, stdout);
+    }
     break;
 
   case FILENAME:
-    fwrite(samples,
-           sizeof(complex float),
-           samples_size,
-           transfer->radio_device.file);
+    if(transfer->audio_converter)
+    {
+      write_audio(transfer, samples, samples_size, transfer->radio_device.file);
+    }
+    else
+    {
+      fwrite(samples,
+             sizeof(complex float),
+             samples_size,
+             transfer->radio_device.file);
+    }
     break;
 
   case SOAPYSDR:
@@ -247,14 +304,31 @@ unsigned int receive_from_radio(ofdm_transfer_t transfer,
   switch(transfer->radio_type)
   {
   case IO:
-    n = fread(samples, sizeof(complex float), samples_size, stdin);
+    if(transfer->audio_converter)
+    {
+      n = read_audio(transfer, samples, samples_size, stdin);
+    }
+    else
+    {
+      n = fread(samples, sizeof(complex float), samples_size, stdin);
+    }
     break;
 
   case FILENAME:
-    n = fread(samples,
-              sizeof(complex float),
-              samples_size,
-              transfer->radio_device.file);
+    if(transfer->audio_converter)
+    {
+      n = read_audio(transfer,
+                     samples,
+                     samples_size,
+                     transfer->radio_device.file);
+    }
+    else
+    {
+      n = fread(samples,
+                sizeof(complex float),
+                samples_size,
+                transfer->radio_device.file);
+    }
     break;
 
   case SOAPYSDR:
@@ -652,7 +726,8 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
                                               char *outer_fec,
                                               char *id,
                                               char *dump,
-                                              unsigned int timeout)
+                                              unsigned int timeout,
+                                              unsigned char audio)
 {
   int direction;
   ofdm_transfer_t transfer = malloc(sizeof(struct ofdm_transfer_s));
@@ -689,7 +764,7 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
   }
   else
   {
-    fprintf(stderr, "Error: Invalid sample\n");
+    fprintf(stderr, "Error: Invalid sample rate\n");
     free(transfer);
     return(NULL);
   }
@@ -706,6 +781,30 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
   }
 
   transfer->frequency_offset = frequency_offset;
+
+  if(audio)
+  {
+    if((transfer->radio_type == IO) || (transfer->radio_type == FILENAME))
+    {
+      transfer->audio_converter = firhilbf_create(25, 60);
+      /* The rate of audio samples is twice the rate of IQ samples */
+      transfer->sample_rate = transfer->sample_rate / 2;
+      /* -(sample_rate / 2) Hz IQ <=> 0 Hz audio
+       * (sample_rate / 2) Hz IQ <=> (sample_rate * 2) Hz audio */
+      transfer->frequency_offset = transfer->frequency - (transfer->sample_rate / 2);
+      transfer->frequency = 0;
+    }
+    else
+    {
+      fprintf(stderr, "Error: This radio type only supports IQ samples\n");
+      free(transfer);
+      return(NULL);
+    }
+  }
+  else
+  {
+    transfer->audio_converter = NULL;
+  }
 
   if(bit_rate != 0)
   {
@@ -882,7 +981,8 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                      char *outer_fec,
                                      char *id,
                                      char *dump,
-                                     unsigned int timeout)
+                                     unsigned int timeout,
+                                     unsigned char audio)
 {
   int flags;
   ofdm_transfer_t transfer;
@@ -905,7 +1005,8 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                            outer_fec,
                                            id,
                                            dump,
-                                           timeout);
+                                           timeout,
+                                           audio);
   if(transfer == NULL)
   {
     return(NULL);
@@ -957,6 +1058,10 @@ void ofdm_transfer_free(ofdm_transfer_t transfer)
     if(transfer->dump)
     {
       fclose(transfer->dump);
+    }
+    if(transfer->audio_converter)
+    {
+      firhilbf_destroy(transfer->audio_converter);
     }
     switch(transfer->radio_type)
     {

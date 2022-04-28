@@ -109,6 +109,10 @@ void usage()
   printf("(32 bits for the real part, 32 bits for the imaginary part).\n");
   printf("The audio samples must be in 'signed integer' format (16 bits).\n");
   printf("\n");
+  printf("The gain parameter can be specified either as an integer to set a\n");
+  printf("global gain, or as a series of keys and values to set specific\n");
+  printf("gains (for example 'LNA=32,VGA=20').\n");
+  printf("\n");
   printf("Available radios (via SoapySDR):\n");
   ofdm_transfer_print_available_radios();
   printf("\n");
@@ -207,7 +211,7 @@ int main(int argc, char **argv)
   unsigned int bit_rate = 38400;
   unsigned long int frequency = 434000000;
   long int frequency_offset = 0;
-  unsigned int gain = 0;
+  char *gain = "0";
   float ppm = 0;
   char *subcarrier_modulation = "qpsk";
   unsigned int subcarriers = 64;
@@ -257,7 +261,7 @@ int main(int argc, char **argv)
       break;
 
     case 'g':
-      gain = strtoul(optarg, NULL, 10);
+      gain = optarg;
       break;
 
     case 'h':

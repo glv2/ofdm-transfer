@@ -716,7 +716,7 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
                                               unsigned int bit_rate,
                                               unsigned long int frequency,
                                               long int frequency_offset,
-                                              unsigned int gain,
+                                              char *gain,
                                               float ppm,
                                               char *subcarrier_modulation,
                                               unsigned int subcarriers,
@@ -730,6 +730,10 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
                                               unsigned char audio)
 {
   int direction;
+  SoapySDRKwargs kwargs;
+  unsigned int n;
+  char *gain_name;
+  unsigned int gain_value;
   ofdm_transfer_t transfer = malloc(sizeof(struct ofdm_transfer_s));
 
   if(transfer == NULL)
@@ -935,10 +939,29 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
                                                0,
                                                transfer->frequency - transfer->frequency_offset,
                                                NULL));
-    SOAPYSDR_CHECK(SoapySDRDevice_setGain(transfer->radio_device.soapysdr,
-                                          direction,
-                                          0,
-                                          gain));
+    if(strchr(gain, '='))
+    {
+      kwargs = SoapySDRKwargs_fromString(gain);
+      for(n = 0; n < kwargs.size; n++)
+      {
+        gain_name = kwargs.keys[n];
+        gain_value = strtoul(kwargs.vals[n], NULL, 10);
+        SOAPYSDR_CHECK(SoapySDRDevice_setGainElement(transfer->radio_device.soapysdr,
+                                                     direction,
+                                                     0,
+                                                     gain_name,
+                                                     gain_value));
+      }
+      SoapySDRKwargs_clear(&kwargs);
+    }
+    else
+    {
+      gain_value = strtoul(gain, NULL, 10);
+      SOAPYSDR_CHECK(SoapySDRDevice_setGain(transfer->radio_device.soapysdr,
+                                            direction,
+                                            0,
+                                            gain_value));
+    }
     transfer->radio_stream.soapysdr = SoapySDRDevice_setupStream(transfer->radio_device.soapysdr,
                                                                  direction,
                                                                  SOAPY_SDR_CF32,
@@ -971,7 +994,7 @@ ofdm_transfer_t ofdm_transfer_create(char *radio_driver,
                                      unsigned int bit_rate,
                                      unsigned long int frequency,
                                      long int frequency_offset,
-                                     unsigned int gain,
+                                     char *gain,
                                      float ppm,
                                      char *subcarrier_modulation,
                                      unsigned int subcarriers,

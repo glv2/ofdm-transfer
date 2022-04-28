@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define RADIO_DRIVER "driver=hackrf"
 #define SAMPLE_RATE 4000000
-#define TRANSMISSION_GAIN 36
-#define RECEPTION_GAIN 60
+#define TRANSMISSION_GAIN "36"
+#define RECEPTION_GAIN "60"
 #define FREQUENCY_OFFSET 100000
 #define BIT_RATE 9600
 #define SUBCARRIER_MODULATION "qpsk"

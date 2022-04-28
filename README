@@ -73,6 +73,10 @@ The IQ samples must be in 'complex float' format
 (32 bits for the real part, 32 bits for the imaginary part).
 The audio samples must be in 'signed integer' format (16 bits).
 
+The gain parameter can be specified either as an integer to set a
+global gain, or as a series of keys and values to set specific
+gains (for example 'LNA=32,VGA=20').
+
 
 ## Compilation
 

@@ -29,5 +29,8 @@ AC_CHECK_LIB(liquid, ofdmflexframegen_create, [], AC_MSG_ERROR([liquid-dsp libra
 AC_CHECK_HEADERS(SoapySDR/Device.h, [], AC_MSG_ERROR([SoapySDR header required]))
 AC_CHECK_LIB(SoapySDR, SoapySDRDevice_make, [], AC_MSG_ERROR([SoapySDR library required]))
 
+AC_CHECK_HEADERS(pthread.h, [], AC_MSG_ERROR([pthread headers required]))
+AC_CHECK_LIB(pthread, pthread_create, [], AC_MSG_ERROR([pthread library required]))
+
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT

@@ -12,7 +12,10 @@ ofdm_transfer_LDADD = libofdm-transfer.la
 include_HEADERS = src/ofdm-transfer.h
 
 examplesdir =
-examples_PROGRAMS = examples/echo-server
+examples_PROGRAMS = examples/duplex examples/echo-server
+examples_duplex_SOURCES = examples/duplex.c
+examples_duplex_CFLAGS = -I src
+examples_duplex_LDADD = libofdm-transfer.la -lpthread
 examples_echo_server_SOURCES = examples/echo-server.c
 examples_echo_server_CFLAGS = -I src
 examples_echo_server_LDADD = libofdm-transfer.la
@@ -26,4 +29,4 @@ tests_test_library_file_CFLAGS = -I src
 tests_test_library_file_LDADD = libofdm-transfer.la
 TESTS = tests/test-library-callback tests/test-library-file tests/test-program.sh
 
-EXTRA_DIST = tests/test-program.sh
+EXTRA_DIST = examples/duplex-ppp.sh tests/test-program.sh

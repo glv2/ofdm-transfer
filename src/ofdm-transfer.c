@@ -490,6 +490,7 @@ void send_frames(ofdm_transfer_t transfer)
                                             transfer->taper_length,
                                             NULL,
                                             &frame_properties);
+  ofdmflexframegen_set_header_props(frame_generator, &frame_properties);
   ofdmflexframegen_set_header_len(frame_generator, header_size);
   memcpy(header, transfer->id, 4);
   set_counter(header, counter);
@@ -626,11 +627,13 @@ void receive_frames(ofdm_transfer_t transfer)
 {
   unsigned int subcarrier_symbol_bits = bits_per_symbol(transfer->subcarrier_modulation);
   float samples_per_bit = 2.0 / subcarrier_symbol_bits;
+  ofdmflexframegenprops_s frame_properties;
   ofdmflexframesync frame_synchronizer;
   float resampling_ratio = (transfer->bit_rate *
                             samples_per_bit) / (float) transfer->sample_rate;
   msresamp_crcf resampler = msresamp_crcf_create(resampling_ratio, 60);
   unsigned int delay = ceilf(msresamp_crcf_get_delay(resampler));
+  unsigned int header_size = 8;
   unsigned int n;
   /* Process data by blocks of 50 ms */
   unsigned int frame_samples_size = ceilf((transfer->bit_rate *
@@ -658,6 +661,12 @@ void receive_frames(ofdm_transfer_t transfer)
                                                 NULL,
                                                 frame_received,
                                                 transfer);
+  frame_properties.check = transfer->crc;
+  frame_properties.fec0 = transfer->inner_fec;
+  frame_properties.fec1 = transfer->outer_fec;
+  frame_properties.mod_scheme = transfer->subcarrier_modulation;
+  ofdmflexframesync_set_header_props(frame_synchronizer, &frame_properties);
+  ofdmflexframesync_set_header_len(frame_synchronizer, header_size);
 
   while((!stop) && (!transfer->stop))
   {

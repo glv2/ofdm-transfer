@@ -124,9 +124,9 @@ These should always be available:
   - h84: Hamming(8,4)
   - h128: Hamming(12,8)
   - g2412: Golay(24,12)
-  - secded2216: SEC-DEC(22,16)
-  - secded3932: SEC-DEC(39,32)
-  - secded7264: SEC-DEC(72,64)
+  - secded2216: SEC-DED(22,16)
+  - secded3932: SEC-DED(39,32)
+  - secded7264: SEC-DED(72,64)
 
 If your libliquid library has been compiled with support for the libfec
 library, the following codes should also be available:

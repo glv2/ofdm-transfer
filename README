@@ -149,6 +149,22 @@ library, the following codes should also be available:
   - rs8: Reed-Solomon, 223/255
 
 
+## Bandwidth
+
+The bandwidth of the generated signal is approximatly
+(bit_rate * 2 * k) Hertz.
+
+Where k is a coefficient depending on the subcarrier modulation:
+  - bpsk: 1
+  - qpsk: 1/2
+  - psk8: 1/3
+  - apsk16: 1/4
+  - apsk32: 1/5
+  - apsk64: 1/6
+  - apsk128: 1/7
+  - apsk256: 1/8
+
+
 ## Examples
 
 Send a file at 9600 b/s on 434 MHz using a HackRF:

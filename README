@@ -180,7 +180,7 @@ them:
     ofdm-transfer -t \
                   -r file=/tmp/samples.s16 \
                   -a \
-                  -r 48000 \
+                  -s 48000 \
                   -f 1500 \
                   -b 1200 \
                   input_file

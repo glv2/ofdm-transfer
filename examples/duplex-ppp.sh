@@ -26,6 +26,7 @@ case "$1" in
              nodefaultroute \
              debug \
              nodetach \
+             passive \
              10.0.0.1:10.0.0.2 \
              pty "./duplex 433800000 434200000"
         ;;
@@ -37,7 +38,6 @@ case "$1" in
              nodefaultroute \
              debug \
              nodetach \
-             passive \
              pty "./duplex 434200000 433800000"
         ;;
 

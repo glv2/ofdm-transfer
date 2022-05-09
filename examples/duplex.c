@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define DOWNLINK_RADIO "driver=rtlsdr"
 #define DOWNLINK_SAMPLE_RATE 250000
@@ -132,6 +133,11 @@ int main(int argc, char **argv)
     fprintf(stderr, "Error: Failed to start downlink thread.\n");
     return(EXIT_FAILURE);
   }
+
+  /* Some function in the fftw library can cause errors when it is called from
+   * several threads at the same time. Waiting 1 second before starting the
+   * second thread seems to avoid the issue. */
+  sleep(1);
 
   if(pthread_create(&uplink_thread, NULL, transfer_thread, &uplink) != 0)
   {

@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define UPLINK_SAMPLE_RATE 4000000
 #define UPLINK_GAIN "36"
 #define UPLINK_FREQUENCY_OFFSET 100000
-#define BIT_RATE 38400
+#define BIT_RATE 9600
 #define SUBCARRIER_MODULATION "qpsk"
 #define SUBCARRIERS 64
 #define CYCLIC_PREFIX_LENGTH 16

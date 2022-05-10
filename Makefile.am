@@ -29,4 +29,5 @@ tests_test_library_file_CFLAGS = -I src
 tests_test_library_file_LDADD = libofdm-transfer.la
 TESTS = tests/test-library-callback tests/test-library-file tests/test-program.sh
 
+dist_doc_DATA = LICENSE README
 EXTRA_DIST = examples/duplex-ppp.sh tests/test-program.sh

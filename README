@@ -203,6 +203,16 @@ them:
     aplay -f S16_LE -r 48000 -c 1 /tmp/samples.s16
 
 
+Send a file at 48 kb/s using an audio cable:
+
+  cat file.dat | ofdm-transfer -t -a -r io -s 48000 -f 12000 -m apsk16 -b 48000 | aplay -q -f S16_LE -r 48000 -c 1
+
+
+Receive a file at 48 kb/s using an audio cable:
+
+  arecord -q -f S16_LE -r 48000 -c 1 | ofdm-transfer -a -r io -s 48000 -f 12000 -m apsk16 -b 48000 -T 10 > file.dat
+
+
 ## Library
 
 You can add OFDM transfer support to your programs easily by using the

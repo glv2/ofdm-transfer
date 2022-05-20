@@ -608,7 +608,7 @@ int frame_received(unsigned char *header,
       fflush(stderr);
     }
   }
-  if(memcmp(id, transfer->id, 4) != 0)
+  else if(memcmp(id, transfer->id, 4) != 0)
   {
     if(verbose)
     {

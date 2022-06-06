@@ -26,7 +26,7 @@ SAMPLES=$(mktemp -t samples.XXXXXX)
 
 echo "This is a test transmission using ofdm-transfer." > ${MESSAGE}
 
-function check_ok_io()
+function check_ok_io
 {
     NAME=$1
     OPTIONS1=$2
@@ -38,7 +38,7 @@ function check_ok_io()
     diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
-function check_ok_file()
+function check_ok_file
 {
     NAME=$1
     OPTIONS1=$2
@@ -50,7 +50,7 @@ function check_ok_file()
     diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
-function check_nok_io()
+function check_nok_io
 {
     NAME=$1
     OPTIONS1=$2
@@ -62,7 +62,7 @@ function check_nok_io()
     ! diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
-function check_nok_file()
+function check_nok_file
 {
     NAME=$1
     OPTIONS1=$2

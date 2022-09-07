@@ -35,6 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define TAU (2 * M_PI)
 
+#define MIN(x, y) ((x < y) ? x : y)
+#define MAX(x, y) ((x > y) ? x : y)
+
 #define SOAPYSDR_CHECK(funcall) \
 { \
   int e = funcall; \
@@ -448,13 +451,10 @@ void send_frames(ofdm_transfer_t transfer)
   unsigned int delay = ceilf(msresamp_crcf_get_delay(resampler));
   unsigned int header_size = 8;
   unsigned char header[header_size];
-  float inner_fec_rate = fec_get_rate(transfer->inner_fec);
-  float outer_fec_rate = fec_get_rate(transfer->outer_fec);
-  float byte_rate = (transfer->bit_rate * inner_fec_rate * outer_fec_rate) / 8;
-  /* Try to make frames of approximately 500 ms, but containing at least
-   * 8 bytes of payload */
-  unsigned int payload_size = ((byte_rate / 2) > (header_size + 8)) ?
-                              (byte_rate / 2) - header_size : 8;
+  /* Try to make frames of approximately 100 ms, but containing at least
+   * 16 bytes and at most 8000 bytes of payload */
+  unsigned int byte_rate = transfer->bit_rate / 8;
+  unsigned int payload_size = MIN(MAX(byte_rate * 0.1, 16), 8000);
   int r;
   unsigned int n;
   unsigned int i;

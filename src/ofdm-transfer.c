@@ -512,12 +512,13 @@ void send_frames(ofdm_transfer_t transfer)
         frame_complete = ofdmflexframegen_write(frame_generator,
                                                 frame_samples,
                                                 frame_samples_size);
-        /* Don't send the padding 0 bytes */
-        for(n = frame_samples_size; n > 0; n--)
+        n = frame_samples_size;
+        if(frame_complete)
         {
-          if(frame_samples[n - 1] != 0)
+          /* Don't send the padding 0 bytes */
+          while(frame_samples[n - 1] == 0)
           {
-            break;
+            n--;
           }
         }
         /* Reduce the amplitude of samples because the frame generator and

@@ -92,6 +92,7 @@ struct ofdm_transfer_s
   unsigned int timeout;
   time_t timeout_start;
   firhilbf audio_converter;
+  float audio_gain;
 };
 
 unsigned char stop = 0;
@@ -155,6 +156,7 @@ void write_audio(ofdm_transfer_t transfer,
                  unsigned int samples_size,
                  FILE *output)
 {
+  float gain = transfer->audio_gain;
   unsigned int n;
   float audio_samples[2];
   short int audio_samples_s16[2];
@@ -164,8 +166,8 @@ void write_audio(ofdm_transfer_t transfer,
     firhilbf_interp_execute(transfer->audio_converter,
                             samples[n],
                             audio_samples);
-    audio_samples_s16[0] = audio_samples[0] * 32767;
-    audio_samples_s16[1] = audio_samples[1] * 32767;
+    audio_samples_s16[0] = (audio_samples[0] * gain) * 32767;
+    audio_samples_s16[1] = (audio_samples[1] * gain) * 32767;
     fwrite(audio_samples_s16, sizeof(short int), 2, output);
   }
 }
@@ -175,6 +177,7 @@ unsigned int read_audio(ofdm_transfer_t transfer,
                         unsigned int samples_size,
                         FILE* input)
 {
+  float gain = transfer->audio_gain;
   unsigned int n = 0;
   float audio_samples[2];
   short int audio_samples_s16[2];
@@ -182,8 +185,8 @@ unsigned int read_audio(ofdm_transfer_t transfer,
   while((n < samples_size) &&
         (fread(audio_samples_s16, sizeof(short int), 2, input) == 2))
   {
-    audio_samples[0] = audio_samples_s16[0] / 32768.0;
-    audio_samples[1] = audio_samples_s16[1] / 32768.0;
+    audio_samples[0] = (audio_samples_s16[0] * gain) / 32768.0;
+    audio_samples[1] = (audio_samples_s16[1] * gain) / 32768.0;
     firhilbf_decim_execute(transfer->audio_converter,
                            audio_samples,
                            &samples[n]);
@@ -743,7 +746,7 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
   SoapySDRKwargs kwargs;
   unsigned int n;
   char *gain_name;
-  unsigned int gain_value;
+  int gain_value;
   ofdm_transfer_t transfer = malloc(sizeof(struct ofdm_transfer_s));
 
   if(transfer == NULL)
@@ -807,6 +810,8 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
        * (sample_rate / 2) Hz IQ <=> (sample_rate * 2) Hz audio */
       transfer->frequency_offset = transfer->frequency - (transfer->sample_rate / 2);
       transfer->frequency = 0;
+      gain_value = strtol(gain, NULL, 10);
+      transfer->audio_gain = powf(10, gain_value / 20.0);
     }
     else
     {
@@ -818,6 +823,7 @@ ofdm_transfer_t ofdm_transfer_create_callback(char *radio_driver,
   else
   {
     transfer->audio_converter = NULL;
+    transfer->audio_gain = 0;
   }
 
   if(bit_rate != 0)

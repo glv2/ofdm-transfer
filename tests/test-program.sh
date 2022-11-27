@@ -99,6 +99,9 @@ check_ok_file "Audio frequency 1500" \
 check_nok_io "Wrong audio frequency 1500 2500" \
              "-a -s 48000 -f 1500 -b 1200" \
              "-a -s 48000 -f 2500 -b 1200"
+check_ok_io "Audio gain -20" \
+            "-a -s 48000 -f 1500 -m bpsk -b 1200 -g -20" \
+            "-a -s 48000 -f 1500 -m bpsk -b 1200"
 
 dd if=/dev/random of=${MESSAGE} bs=1000 count=1000 status=none
 check_ok_file "Bit rate 8000000 and sample rate 20000000" \

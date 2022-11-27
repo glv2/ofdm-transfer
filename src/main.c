@@ -60,7 +60,7 @@ void usage()
   printf("  -f <frequency>  (default: 434000000 Hz)\n");
   printf("    Frequency of the OFDM transmission.\n");
   printf("  -g <gain>  (default: 0)\n");
-  printf("    Gain of the radio transceiver.\n");
+  printf("    Gain of the radio transceiver, or audio gain in dB.\n");
   printf("  -h\n");
   printf("    This help.\n");
   printf("  -i <id>  (default: \"\")\n");
@@ -112,6 +112,8 @@ void usage()
   printf("The gain parameter can be specified either as an integer to set a\n");
   printf("global gain, or as a series of keys and values to set specific\n");
   printf("gains (for example 'LNA=32,VGA=20').\n");
+  printf("When using the audio mode (with the '-a' option), the gain value\n");
+  printf("in dB is applied to the audio samples.\n");
   printf("\n");
   printf("Available radios (via SoapySDR):\n");
   ofdm_transfer_print_available_radios();

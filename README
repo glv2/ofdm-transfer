@@ -24,7 +24,7 @@ Options:
   -f <frequency>  (default: 434000000 Hz)
     Frequency of the OFDM transmission.
   -g <gain>  (default: 0)
-    Gain of the radio transceiver.
+    Gain of the radio transceiver, or audio gain in dB.
   -h
     This help.
   -i <id>  (default: "")
@@ -76,6 +76,8 @@ The audio samples must be in 'signed integer' format (16 bits).
 The gain parameter can be specified either as an integer to set a
 global gain, or as a series of keys and values to set specific
 gains (for example 'LNA=32,VGA=20').
+When using the audio mode (with the '-a' option), the gain value
+in dB is applied to the audio samples.
 
 
 ## Compilation

@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ofdm-transfer 1.7.2\n"
+"Project-Id-Version: ofdm-transfer 1.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-28 10:47+0100\n"
+"POT-Creation-Date: 2022-11-28 11:19+0100\n"
 "PO-Revision-Date: 2022-11-28 10:23+0100\n"
 "Last-Translator: Guillaume Le Vaillant <glv@posteo.net>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -28,8 +28,8 @@ msgstr ""
 
 #: src/main.c:48
 #, c-format
-msgid "ofdm-transfer version 1.7.2\n"
-msgstr "ofdm-transfer version 1.7.2\n"
+msgid "ofdm-transfer version 1.8.0\n"
+msgstr "ofdm-transfer version 1.8.0\n"
 
 #: src/main.c:50
 #, c-format
@@ -142,7 +142,8 @@ msgstr "    Modulation à utiliser pour les sous-porteuses.\n"
 #: src/main.c:75
 #, c-format
 msgid "  -n <subcarriers[,cyclic prefix[,taper]]>  (default: 64,16,4)\n"
-msgstr "  -n <sous-porteuses[,préfixe cyclique[,effilage]]>  (défaut: 64,16,4)\n"
+msgstr ""
+"  -n <sous-porteuses[,préfixe cyclique[,effilage]]>  (défaut: 64,16,4)\n"
 
 #: src/main.c:76
 #, c-format

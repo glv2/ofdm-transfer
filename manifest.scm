@@ -10,6 +10,7 @@
    "findutils"
    "gawk"
    "gcc-toolchain"
+   "gettext"
    "git"
    "grep"
    "libtool"

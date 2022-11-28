@@ -45,7 +45,7 @@ void signal_handler(int signum)
 
 void usage()
 {
-  printf(_("ofdm-transfer version 1.7.2\n"));
+  printf(_("ofdm-transfer version 1.8.0\n"));
   printf("\n");
   printf(_("Usage: ofdm-transfer [options] [filename]\n"));
   printf("\n");

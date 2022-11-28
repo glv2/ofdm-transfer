@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ofdm-transfer 1.7.2\n"
+"Project-Id-Version: ofdm-transfer 1.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-28 10:47+0100\n"
+"POT-Creation-Date: 2022-11-28 11:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #: src/main.c:48
 #, c-format
-msgid "ofdm-transfer version 1.7.2\n"
+msgid "ofdm-transfer version 1.8.0\n"
 msgstr ""
 
 #: src/main.c:50

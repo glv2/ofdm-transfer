@@ -20,6 +20,7 @@
 
 set -e
 
+OFDM_TRANSFER=../src/ofdm-transfer
 MESSAGE=$(mktemp -t message.XXXXXX)
 DECODED=$(mktemp -t decoded.XXXXXX)
 SAMPLES=$(mktemp -t samples.XXXXXX)
@@ -33,8 +34,8 @@ check_ok_io()
     OPTIONS2=$3
 
     echo "Test: ${NAME}"
-    ./ofdm-transfer -t -r io ${OPTIONS1} ${MESSAGE} > ${SAMPLES}
-    ./ofdm-transfer -r io ${OPTIONS2} ${DECODED} < ${SAMPLES}
+    ${OFDM_TRANSFER} -t -r io ${OPTIONS1} ${MESSAGE} > ${SAMPLES}
+    ${OFDM_TRANSFER} -r io ${OPTIONS2} ${DECODED} < ${SAMPLES}
     diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
@@ -45,8 +46,8 @@ check_ok_file()
     OPTIONS2=$3
 
     echo "Test: ${NAME}"
-    ./ofdm-transfer -t -r file=${SAMPLES} ${OPTIONS1} ${MESSAGE}
-    ./ofdm-transfer -r file=${SAMPLES} ${OPTIONS2} ${DECODED}
+    ${OFDM_TRANSFER} -t -r file=${SAMPLES} ${OPTIONS1} ${MESSAGE}
+    ${OFDM_TRANSFER} -r file=${SAMPLES} ${OPTIONS2} ${DECODED}
     diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
@@ -57,8 +58,8 @@ check_nok_io()
     OPTIONS2=$3
 
     echo "Test: ${NAME}"
-    ./ofdm-transfer -t -r io ${OPTIONS1} ${MESSAGE} > ${SAMPLES}
-    ./ofdm-transfer -r io ${OPTIONS2} ${DECODED} < ${SAMPLES}
+    ${OFDM_TRANSFER} -t -r io ${OPTIONS1} ${MESSAGE} > ${SAMPLES}
+    ${OFDM_TRANSFER} -r io ${OPTIONS2} ${DECODED} < ${SAMPLES}
     ! diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 
@@ -69,8 +70,8 @@ check_nok_file()
     OPTIONS2=$3
 
     echo "Test: ${NAME}"
-    ./ofdm-transfer -t -r file=${SAMPLES} ${OPTIONS1} ${MESSAGE}
-    ./ofdm-transfer -r file=${SAMPLES} ${OPTIONS2} ${DECODED}
+    ${OFDM_TRANSFER} -t -r file=${SAMPLES} ${OPTIONS1} ${MESSAGE}
+    ${OFDM_TRANSFER} -r file=${SAMPLES} ${OPTIONS2} ${DECODED}
     ! diff -q ${MESSAGE} ${DECODED} > /dev/null
 }
 

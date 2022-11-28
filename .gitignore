@@ -1,3 +1,4 @@
+ABOUT-NLS
 aclocal.m4
 autom4te.cache/
 compile
@@ -8,7 +9,6 @@ depcomp
 .dirstamp
 examples/duplex
 examples/echo-server
-/ofdm-transfer
 install-sh
 .libs/
 libtool
@@ -17,6 +17,21 @@ m4/
 Makefile
 Makefile.in
 missing
+po/*.gmo
+po/*.mo
+po/boldquot.sed
+po/en@boldquot.header
+po/en@quot.header
+po/insert-header.sin
+po/Makefile.in.in
+po/Makevars.template
+po/POTFILES
+po/quot.sed
+po/remove-potcdate.sin
+po/remove-potcdate.sed
+po/Rules-quot
+po/stamp-po
+src/ofdm-transfer
 test-driver
 test-suite.log
 tests/test-library-file
@@ -30,3 +45,4 @@ tests/test-program.sh.trs
 *.la
 *.lo
 *.o
+*~

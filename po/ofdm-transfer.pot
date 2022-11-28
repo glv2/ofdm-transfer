@@ -1,0 +1,379 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Guillaume LE VAILLANT
+# This file is distributed under the same license as the ofdm-transfer package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ofdm-transfer 1.7.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-28 10:47+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main.c:37
+#, c-format
+msgid ""
+"\n"
+"Stopping (signal %d)\n"
+msgstr ""
+
+#: src/main.c:48
+#, c-format
+msgid "ofdm-transfer version 1.7.2\n"
+msgstr ""
+
+#: src/main.c:50
+#, c-format
+msgid "Usage: ofdm-transfer [options] [filename]\n"
+msgstr ""
+
+#: src/main.c:52
+#, c-format
+msgid "Options:\n"
+msgstr ""
+
+#: src/main.c:54
+#, c-format
+msgid "    Use audio samples instead of IQ samples.\n"
+msgstr ""
+
+#: src/main.c:55
+#, c-format
+msgid "  -b <bit rate>  (default: 38400 b/s)\n"
+msgstr ""
+
+#: src/main.c:56
+#, c-format
+msgid "    Bit rate of the OFDM transmission.\n"
+msgstr ""
+
+#: src/main.c:57
+#, c-format
+msgid "  -c <ppm>  (default: 0.0, can be negative)\n"
+msgstr ""
+
+#: src/main.c:58
+#, c-format
+msgid "    Correction for the radio clock.\n"
+msgstr ""
+
+#: src/main.c:59
+#, c-format
+msgid "  -d <filename>\n"
+msgstr ""
+
+#: src/main.c:60
+#, c-format
+msgid ""
+"    Dump a copy of the samples sent to or received from\n"
+"    the radio.\n"
+msgstr ""
+
+#: src/main.c:62
+#, c-format
+msgid "  -e <fec[,fec]>  (default: h128,none)\n"
+msgstr ""
+
+#: src/main.c:63
+#, c-format
+msgid "    Inner and outer forward error correction codes to use.\n"
+msgstr ""
+
+#: src/main.c:64
+#, c-format
+msgid "  -f <frequency>  (default: 434000000 Hz)\n"
+msgstr ""
+
+#: src/main.c:65
+#, c-format
+msgid "    Frequency of the OFDM transmission.\n"
+msgstr ""
+
+#: src/main.c:66
+#, c-format
+msgid "  -g <gain>  (default: 0)\n"
+msgstr ""
+
+#: src/main.c:67
+#, c-format
+msgid "    Gain of the radio transceiver, or audio gain in dB.\n"
+msgstr ""
+
+#: src/main.c:69
+#, c-format
+msgid "    This help.\n"
+msgstr ""
+
+#: src/main.c:70
+#, c-format
+msgid "  -i <id>  (default: \"\")\n"
+msgstr ""
+
+#: src/main.c:71
+#, c-format
+msgid ""
+"    Transfer id (at most 4 bytes). When receiving, the frames\n"
+"    with a different id will be ignored.\n"
+msgstr ""
+
+#: src/main.c:73
+#, c-format
+msgid "  -m <modulation>  (default: qpsk)\n"
+msgstr ""
+
+#: src/main.c:74
+#, c-format
+msgid "    Modulation to use for the subcarriers.\n"
+msgstr ""
+
+#: src/main.c:75
+#, c-format
+msgid "  -n <subcarriers[,cyclic prefix[,taper]]>  (default: 64,16,4)\n"
+msgstr ""
+
+#: src/main.c:76
+#, c-format
+msgid ""
+"    Number of subcarriers, cyclic prefix length and taper length\n"
+"    of the OFDM transmission.\n"
+msgstr ""
+
+#: src/main.c:78
+#, c-format
+msgid "  -o <offset>  (default: 0 Hz, can be negative)\n"
+msgstr ""
+
+#: src/main.c:79
+#, c-format
+msgid ""
+"    Set the central frequency of the transceiver 'offset' Hz\n"
+"    lower than the signal frequency to send or receive.\n"
+msgstr ""
+
+#: src/main.c:81
+#, c-format
+msgid "  -r <radio>  (default: \"\")\n"
+msgstr ""
+
+#: src/main.c:82
+#, c-format
+msgid "    Radio to use.\n"
+msgstr ""
+
+#: src/main.c:83
+#, c-format
+msgid "  -s <sample rate>  (default: 2000000 S/s)\n"
+msgstr ""
+
+#: src/main.c:84
+#, c-format
+msgid "    Sample rate to use.\n"
+msgstr ""
+
+#: src/main.c:85
+#, c-format
+msgid "  -T <timeout>  (default: 0 s)\n"
+msgstr ""
+
+#: src/main.c:86
+#, c-format
+msgid ""
+"    Number of seconds after which reception will be stopped if\n"
+"    no frame has been received. A timeout of 0 means no timeout.\n"
+msgstr ""
+
+#: src/main.c:89
+#, c-format
+msgid "    Use transmit mode.\n"
+msgstr ""
+
+#: src/main.c:91
+#, c-format
+msgid "    Print debug messages.\n"
+msgstr ""
+
+#: src/main.c:92
+#, c-format
+msgid "  -w <delay>  (default: 0.0 s)\n"
+msgstr ""
+
+#: src/main.c:93
+#, c-format
+msgid ""
+"    Wait a little before switching the radio off.\n"
+"    This can be useful if the hardware needs some time to send\n"
+"    the last samples it has buffered.\n"
+msgstr ""
+
+#: src/main.c:97
+#, c-format
+msgid ""
+"By default the program is in 'receive' mode.\n"
+"Use the '-t' option to use the 'transmit' mode.\n"
+msgstr ""
+
+#: src/main.c:100
+#, c-format
+msgid ""
+"In 'receive' mode, the samples are received from the radio,\n"
+"and the decoded data is written either to 'filename' if it\n"
+"is specified, or to standard output.\n"
+"In 'transmit' mode, the data to send is read either from\n"
+"'filename' if it is specified, or from standard input,\n"
+"and the samples are sent to the radio.\n"
+msgstr ""
+
+#: src/main.c:107
+#, c-format
+msgid ""
+"Instead of a real radio transceiver, the 'io' radio type uses\n"
+"standard input in 'receive' mode, and standard output in\n"
+"'transmit' mode.\n"
+"The 'file=path-to-file' radio type reads/writes the samples\n"
+"from/to 'path-to-file'.\n"
+"The IQ samples must be in 'complex float' format\n"
+"(32 bits for the real part, 32 bits for the imaginary part).\n"
+"The audio samples must be in 'signed integer' format (16 bits).\n"
+msgstr ""
+
+#: src/main.c:116
+#, c-format
+msgid ""
+"The gain parameter can be specified either as an integer to set a\n"
+"global gain, or as a series of keys and values to set specific\n"
+"gains (for example 'LNA=32,VGA=20').\n"
+"When using the audio mode (with the '-a' option), the gain value\n"
+"in dB is applied to the audio samples.\n"
+msgstr ""
+
+#: src/main.c:122
+#, c-format
+msgid "Available radios (via SoapySDR):\n"
+msgstr ""
+
+#: src/main.c:125
+#, c-format
+msgid "Available subcarrier modulations:\n"
+msgstr ""
+
+#: src/main.c:128
+#, c-format
+msgid "Available forward error correction codes:\n"
+msgstr ""
+
+#: src/main.c:326
+#, c-format
+msgid "Error: Unknown parameter: '-%c %s'\n"
+msgstr ""
+
+#: src/main.c:364
+#, c-format
+msgid "Error: Failed to initialize transfer\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:49 src/ofdm-transfer.c:947 src/ofdm-transfer.c:992
+#, c-format
+msgid "Error: %s\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:482 src/ofdm-transfer.c:657 src/ofdm-transfer.c:757
+#, c-format
+msgid "Error: Memory allocation failed\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:609
+#, c-format
+msgid "Frame %u for '%s': corrupted header\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:613
+#, c-format
+msgid "Frame %u for '%s': corrupted payload\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:622
+#, c-format
+msgid "Frame %u for '%s': ignored\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:691
+#, c-format
+msgid "Timeout: %d s without frames\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:787
+#, c-format
+msgid "Error: Invalid sample rate\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:798
+#, c-format
+msgid "Error: Invalid frequency\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:821
+#, c-format
+msgid "Error: This radio type only supports IQ samples\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:838
+#, c-format
+msgid "Error: Invalid bit rate\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:857
+#, c-format
+msgid "Error: Invalid subcarrier modulation\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:868
+#, c-format
+msgid "Error: Invalid number of subcarriers\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:880
+#, c-format
+msgid "Error: Invalid inner FEC\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:888
+#, c-format
+msgid "Error: Invalid outer FEC\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:899
+#, c-format
+msgid "Error: Id must be at most 4 bytes long\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:909 src/ofdm-transfer.c:937 src/ofdm-transfer.c:1070
+#, c-format
+msgid "Error: Failed to open '%s'\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:1000
+#, c-format
+msgid "Error: Unknown radio type\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:1144
+#, c-format
+msgid "Info: Using IO pseudo-radio\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:1151
+#, c-format
+msgid "Info: Using FILENAME pseudo-radio\n"
+msgstr ""
+
+#: src/ofdm-transfer.c:1199
+#, c-format
+msgid "  No radio detected\n"
+msgstr ""

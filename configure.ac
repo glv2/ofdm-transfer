@@ -8,11 +8,17 @@ AC_PROG_CC
 AC_PROG_INSTALL
 LT_INIT([shared disable-static])
 
+dnl Check for translation tools
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.19.1])
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.1])
+
 dnl Check for standard headers
-AC_CHECK_HEADERS([complex.h fcntl.h signal.h stdio.h stdlib.h string.h strings.h unistd.h])
+AC_CHECK_HEADERS([complex.h fcntl.h locale.h signal.h stdio.h stdlib.h string.h strings.h unistd.h])
 
 dnl Check for functions
 AC_CHECK_FUNCS([fcntl])
+AC_CHECK_FUNCS([bindtextdomain setlocale textdomain])
 AC_CHECK_FUNCS([signal])
 AC_CHECK_FUNCS([fclose feof fflush fopen fprintf fread fwrite printf])
 AC_CHECK_FUNCS([exit free malloc strtof strtol strtoul])
@@ -32,5 +38,5 @@ AC_CHECK_LIB(SoapySDR, SoapySDRDevice_make, [], AC_MSG_ERROR([SoapySDR library r
 AC_CHECK_HEADERS(pthread.h, [], AC_MSG_ERROR([pthread headers required]))
 AC_CHECK_LIB(pthread, pthread_create, [], AC_MSG_ERROR([pthread library required]))
 
-AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(Makefile examples/Makefile po/Makefile.in src/Makefile tests/Makefile)
 AC_OUTPUT

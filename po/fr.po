@@ -288,7 +288,7 @@ msgstr ""
 "Le paramètre de gain peut être spécifié soit comme un entier pour définir\n"
 "un gain global, ou comme une série de clés et de valeurs pour définir des\n"
 "gains spécifiques (par exemple 'LNA=32,VGA=20').\n"
-"Lorsque le mode audio est utilisé (avec l(option '-a'), la valeur de gain\n"
+"Lorsque le mode audio est utilisé (avec l'option '-a'), la valeur de gain\n"
 "en dB est appliquée aux échantillons audio.\n"
 
 #: src/main.c:122

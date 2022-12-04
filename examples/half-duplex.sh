@@ -21,6 +21,7 @@
 SAMPLE_RATE=48000
 FREQUENCY=1500
 BIT_RATE=1200
+MODULATION="bpsk"
 
 # Parameters for an Icom IC-705 radio connected via USB
 PCM_IN="alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00.analog-stereo"
@@ -54,7 +55,7 @@ send()
                       -r io \
                       -s ${SAMPLE_RATE} \
                       -f ${FREQUENCY} \
-                      -m bpsk \
+                      -m ${MODULATION} \
                       -b ${BIT_RATE} \
                       -g ${AUDIO_GAIN} | \
         sox -q -t s16 -r ${SAMPLE_RATE} -c 1 -L - -t pulseaudio ${PCM_OUT}
@@ -70,7 +71,7 @@ receive()
         ofdm-transfer -a -r io \
                       -s ${SAMPLE_RATE} \
                       -f ${FREQUENCY} \
-                      -m bpsk \
+                      -m ${MODULATION} \
                       -b ${BIT_RATE} \
                       -g ${AUDIO_GAIN} &
     sox_pid=$(pidof "sox")

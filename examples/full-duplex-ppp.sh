@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# This script makes a PPP connection between two machines using the duplex
-# example program.
+# This script makes a PPP connection between two machines using the
+# full-duplex example program.
 #
 # Copyright 2022 Guillaume LE VAILLANT
 #
@@ -28,7 +28,7 @@ case "$1" in
              nodetach \
              passive \
              10.0.0.1:10.0.0.2 \
-             pty "./duplex 433800000 434200000"
+             pty "./full-duplex 433800000 434200000"
         ;;
 
     client)
@@ -38,7 +38,7 @@ case "$1" in
              nodefaultroute \
              debug \
              nodetach \
-             pty "./duplex 434200000 433800000"
+             pty "./full-duplex 434200000 433800000"
         ;;
 
     *)

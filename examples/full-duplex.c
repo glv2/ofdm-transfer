@@ -1,5 +1,5 @@
 /*
-Example of use of ofdm-transfer's API to make a duplex link.
+Example of use of ofdm-transfer's API to make a full-duplex link.
 
 Copyright 2022 Guillaume LE VAILLANT
 

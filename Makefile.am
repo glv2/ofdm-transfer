@@ -5,4 +5,7 @@ SUBDIRS = src examples po tests
 
 include_HEADERS = src/ofdm-transfer.h
 dist_doc_DATA = LICENSE README
-EXTRA_DIST = examples/duplex-ppp.sh tests/test-program.sh
+EXTRA_DIST = \
+  examples/full-duplex-ppp.sh \
+  examples/half-duplex.sh \
+  tests/test-program.sh

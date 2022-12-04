@@ -7,7 +7,7 @@ configure
 depcomp
 .deps/
 .dirstamp
-examples/duplex
+examples/full-duplex
 examples/echo-server
 install-sh
 .libs/

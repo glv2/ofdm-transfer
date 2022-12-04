@@ -224,8 +224,11 @@ The API is described in the 'ofdm-transfer.h' file.
 The 'echo-server' example program shows how to use the API to make a server
 receiving messages from clients and sending them back in reverse order.
 
-The 'duplex' example program shows how to use the API to make a duplex link
-using two devices.
+The 'full-duplex' example program shows how to use the API to make
+a full-duplex link using two devices.
 
-The 'duplex-ppp.sh' script shows how to make a PPP connection between two
-machines using the 'duplex' example program.
+The 'full-duplex-ppp.sh' script shows how to make a PPP connection between two
+machines using the 'full-duplex' example program.
+
+The 'half-duplex.sh' script shows how to make a half-duplex link between two
+(not SDR) transceivers using audio, like a sound modem TNC.

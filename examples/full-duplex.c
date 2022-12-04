@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void usage()
 {
   fprintf(stderr, "Usage:\n");
-  fprintf(stderr, "  duplex <downlink frequency> <uplink frequency>\n");
+  fprintf(stderr, "  full-duplex <downlink frequency> <uplink frequency>\n");
 }
 
 void signal_handler(int signum)

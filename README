@@ -153,8 +153,8 @@ library, the following codes should also be available:
 
 ## Bandwidth
 
-The bandwidth of the generated signal is approximately
-(bit_rate * 2 * k) Hertz.
+The occupied bandwidth (99% power) of the generated signal is approximately
+(bit_rate * 1.6 * k) Hertz.
 
 Where k is a coefficient depending on the subcarrier modulation:
   - bpsk: 1
